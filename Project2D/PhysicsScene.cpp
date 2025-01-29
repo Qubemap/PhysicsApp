@@ -25,19 +25,40 @@ void PhysicsScene::Update(float dt)
 
 		accumulatedTime -= m_timeStep;
 
-		// Check for collisions (ideally have scene mgmt)
-		int actorCount = m_actors.size();
-		for (int outer = 0; outer < actorCount - 1; outer++)
-		{
-			for (int inner = outer + 1; inner < actorCount; inner++)
-			{
-				PhysicsObject* object1 = m_actors[outer];
-				PhysicsObject* object2 = m_actors[inner];
+		float M = 0.1f;
+		glm::vec2 F = { 0, -1 };
 
-				// TEMP assuming shapes are spheres
-				Sphere2Sphere(object1, object2);
-			}
+		Sphere* rocket = dynamic_cast<Sphere*>(m_actors[0]);
+
+		if (rocket->GetMass() > 10) // Repeat until all the mass has been used up
+		{
+
+			rocket->SetMass(rocket->GetMass() - M); // Reduce the mass of the rocket by M to simulate fuel being used
+
+			glm::vec2 gasPos = rocket->GetPosition() - glm::vec2(0, rocket->GetRadius());
+
+			Sphere* gas = new Sphere(gasPos, glm::vec2((std::rand() % 10) - 5, 0), M, 0.1f, glm::vec4(1, 0, 0, 1)); // Create a new sphere of mass M next to the rocket to simulate an exhaust gas particle
+
+			rocket->ApplyForceToActor(gas, F); // Use applyForceToActor() to apply force to the exhaust gas from the rocket (make sure it is in the correct direction)
+			
+			AddActor(gas);
 		}
+		
+		// Comment out collision check
+
+		//// Check for collisions (ideally have scene mgmt)
+		//int actorCount = m_actors.size();
+		//for (int outer = 0; outer < actorCount - 1; outer++)
+		//{
+		//	for (int inner = outer + 1; inner < actorCount; inner++)
+		//	{
+		//		PhysicsObject* object1 = m_actors[outer];
+		//		PhysicsObject* object2 = m_actors[inner];
+
+		//		// TEMP assuming shapes are spheres
+		//		Sphere2Sphere(object1, object2);
+		//	}
+		//}
 	}
 }
 

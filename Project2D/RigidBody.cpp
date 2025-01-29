@@ -28,7 +28,7 @@ void RigidBody::ApplyForce(glm::vec2 force)
 void RigidBody::ApplyForceToActor(RigidBody* actor2, glm::vec2 force)
 {
 	actor2->ApplyForce(force);
-	ApplyForce(-force);
+	ApplyForce(force * glm::vec2(-1, -1));
 }
 
 
