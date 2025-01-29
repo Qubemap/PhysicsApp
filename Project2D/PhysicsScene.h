@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
-#include "PhysicsObject.h"
+
 
 class PhysicsObject;
 
@@ -16,6 +16,7 @@ public:
 	void RemoveActor(PhysicsObject* actor);
 	void Update(float dt);
 	void Draw();
+	static bool Sphere2Sphere(PhysicsObject*, PhysicsObject*);
 
 	void setGravity(const glm::vec2 gravity) { m_gravity = gravity; }
 	glm::vec2 GetGravity() const { return m_gravity; }

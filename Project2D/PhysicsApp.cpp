@@ -4,6 +4,7 @@
 #include "Input.h"
 #include <glm\ext.hpp>
 #include <Gizmos.h>
+#include "Sphere.h"
 
 PhysicsApp::PhysicsApp() {
 
@@ -22,8 +23,13 @@ bool PhysicsApp::startup() {
 	m_font = new aie::Font("./font/consolas.ttf", 32);
 	
 	m_physicsScene = new PhysicsScene();
+	m_physicsScene->setGravity(glm::vec2(0, -10));
 	m_physicsScene->SetTimeStep(0.01f); // Decreasing the value of this timestep will increase the accuracy of our physics simulation at the expense of increased processing time
 
+
+	Sphere* ball;
+	ball = new Sphere(glm::vec2(-40, 0), glm::vec2(10, 30), 3.0f, 1, glm::vec4(1, 0, 0, 1));
+	m_physicsScene->AddActor(ball);
 	return true;
 }
 

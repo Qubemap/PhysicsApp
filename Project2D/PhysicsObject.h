@@ -4,20 +4,21 @@
 #include <glm/glm.hpp>
 
 enum ShapeType {
-	Plane = 0,
-	Sphere,
-	Box
+	PLANE = 0,
+	SPHERE,
+	BOX
 };
 
 class PhysicsObject
 {
 protected:
+	PhysicsObject() {}
 	PhysicsObject(ShapeType a_shapeID) : m_shapeID(a_shapeID) {}
 
 public:
-	virtual void fixedUpdate(glm::vec2 gravity, float timeStep) = 0;
-	virtual void draw() = 0;
-	virtual void resetPosition() {};
+	virtual void FixedUpdate(glm::vec2 gravity, float timeStep) = 0;
+	virtual void Draw() = 0;
+	virtual void ResetPosition() {};
 
 protected:
 	ShapeType m_shapeID;
