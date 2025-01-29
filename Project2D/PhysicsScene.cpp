@@ -16,6 +16,10 @@ void PhysicsScene::Update(float dt)
 	static float accumulatedTime = 0.0f;
 	accumulatedTime += dt;
 
+	static float timer = 0.0f;
+	timer += dt;
+	float timeInSecs = 0.05;
+
 	while (accumulatedTime >= m_timeStep)
 	{
 		for (auto pActor : m_actors)
@@ -25,24 +29,30 @@ void PhysicsScene::Update(float dt)
 
 		accumulatedTime -= m_timeStep;
 
-		float M = 0.1f;
-		glm::vec2 F = { 0, -1 };
-
-		Sphere* rocket = dynamic_cast<Sphere*>(m_actors[0]);
-
-		if (rocket->GetMass() > 10) // Repeat until all the mass has been used up
+		if (timer > timeInSecs)
 		{
+			float M = 0.1f;
+			glm::vec2 F = { 0, -3 };
 
-			rocket->SetMass(rocket->GetMass() - M); // Reduce the mass of the rocket by M to simulate fuel being used
+			Sphere* rocket = dynamic_cast<Sphere*>(m_actors[0]);
 
-			glm::vec2 gasPos = rocket->GetPosition() - glm::vec2(0, rocket->GetRadius());
+			if (rocket->GetMass() > 20) // Repeat until all the mass has been used up
+			{
 
-			Sphere* gas = new Sphere(gasPos, glm::vec2((std::rand() % 10) - 5, 0), M, 0.1f, glm::vec4(1, 0, 0, 1)); // Create a new sphere of mass M next to the rocket to simulate an exhaust gas particle
+				rocket->SetMass(rocket->GetMass() - M); // Reduce the mass of the rocket by M to simulate fuel being used
 
-			rocket->ApplyForceToActor(gas, F); // Use applyForceToActor() to apply force to the exhaust gas from the rocket (make sure it is in the correct direction)
-			
-			AddActor(gas);
+				glm::vec2 gasPos = rocket->GetPosition() - glm::vec2(0, rocket->GetRadius());
+
+				Sphere* gas = new Sphere(gasPos, glm::vec2((std::rand() % 10) - 5, 0), M, 0.1f, glm::vec4(0, 1, 0, 1)); // Create a new sphere of mass M next to the rocket to simulate an exhaust gas particle
+
+				rocket->ApplyForceToActor(gas, F); // Use applyForceToActor() to apply force to the exhaust gas from the rocket (make sure it is in the correct direction)
+
+				AddActor(gas);
+			}
+
+			timer = 0.0f;
 		}
+		
 		
 		// Comment out collision check
 
