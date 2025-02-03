@@ -20,6 +20,7 @@ public:
 	void SetVelocity(glm::vec2 velocity) { m_velocity = velocity; }
 	float GetMass() { return m_mass; }
 	void SetMass(float mass) { m_mass = mass; }
+	float GetKineticEnergy();
 
 protected:
 	glm::vec2 m_position;

@@ -1,4 +1,5 @@
 #include "RigidBody.h"
+#include <iostream>
 
 RigidBody::RigidBody()
 {
@@ -42,7 +43,27 @@ void RigidBody::ResolveCollision(RigidBody* actor2)
 
 	glm::vec2 force = normal * j;
 
+	float kePre = GetKineticEnergy() + actor2->GetKineticEnergy(); // kePre = Kinetic energy before collision
+
 	ApplyForceToActor(actor2, force);
+
+	float kePost = GetKineticEnergy() + actor2->GetKineticEnergy();
+
+	float deltaKe = kePost - kePre;
+	if (deltaKe > kePost * 0.01f)
+	{
+		std::cout << "Kinetic Energy discrepancy greater than 1% detected!" << std::endl;
+	}
+	else
+	{
+		std::cout << "allg man" << std::endl;
+	}
+
+}
+
+float RigidBody::GetKineticEnergy()
+{
+	return (0.5 * m_mass * (m_velocity * m_velocity).length());
 }
 
 void RigidBody::FixedUpdate(glm::vec2 gravity, float timeStep)

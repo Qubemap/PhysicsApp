@@ -111,7 +111,8 @@ bool PhysicsScene::Sphere2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 		if (intersection > 0 && velocityOutOfPlane < 0)
 		{
 			// set sphere velocity to 0
-			sphere->ApplyForce(-sphere->GetVelocity() * sphere->GetMass());
+			plane->ResolveCollision(sphere);
+
 			return true;
 		}
 	}
@@ -130,8 +131,7 @@ bool PhysicsScene::Sphere2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 	{
 		if ((sphere1->GetRadius() + sphere2->GetRadius()) > glm::distance(sphere1->GetPosition(), sphere2->GetPosition())) // if overlap
 		{
-			sphere1->SetVelocity(glm::vec2(0,0));
-			sphere2->SetVelocity(glm::vec2(0,0));
+			sphere1->ResolveCollision(sphere2);
 
 			return true;
 		}
@@ -139,8 +139,3 @@ bool PhysicsScene::Sphere2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 
 	return false;
 }
-
-
-
-
-

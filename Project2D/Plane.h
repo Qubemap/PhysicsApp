@@ -2,6 +2,8 @@
 
 #include "PhysicsObject.h"
 
+class RigidBody;
+
 class Plane : public PhysicsObject
 {
 public:
@@ -12,6 +14,7 @@ public:
 	virtual void FixedUpdate(glm::vec2 gravity, float timeStep);
 	virtual void Draw();
 	virtual void ResetPosition();
+	virtual void ResolveCollision(RigidBody* actor2);
 
 	glm::vec2 getNormal() { return m_normal; }
 	float getDistance() { return m_distanceToOrigin; }

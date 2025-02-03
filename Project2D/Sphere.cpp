@@ -9,5 +9,5 @@ Sphere::Sphere(glm::vec2 position, glm::vec2 velocity, float mass, float radius,
 
 void Sphere::Draw()
 {
-	aie::Gizmos::add2DCircle(m_position, m_radius, 8, m_colour);
+	aie::Gizmos::add2DCircle(m_position, m_radius, 16, m_colour);
 }
