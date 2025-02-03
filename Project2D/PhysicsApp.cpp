@@ -5,6 +5,7 @@
 #include <glm\ext.hpp>
 #include <Gizmos.h>
 #include "Sphere.h"
+#include "Plane.h"
 
 PhysicsApp::PhysicsApp() {
 
@@ -23,15 +24,25 @@ bool PhysicsApp::startup() {
 	m_font = new aie::Font("./font/consolas.ttf", 32);
 	
 	m_physicsScene = new PhysicsScene();
-	m_physicsScene->setGravity(glm::vec2(0, -1));
-	m_physicsScene->SetTimeStep(0.01f); // Decreasing the value of this timestep will increase the accuracy of our physics simulation at the expense of increased processing time 0.01f
+	m_physicsScene->SetTimeStep(0.01f);
+	m_physicsScene->setGravity({ 0, -9.82f });
 
-	Sphere* rocket = new Sphere(glm::vec2(0, -50), glm::vec2(0, 0), 50, 4, glm::vec4(1, 0, 0, 1));
-
-	m_physicsScene->AddActor(rocket);
+	Plane* line1 = new Plane({ 0, 1 }, -30);
+	Sphere* ball1 = new Sphere({ -20, 0 }, glm::vec2(0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
+	Sphere* ball2 = new Sphere({ 10, 0 }, glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	
+	m_physicsScene->AddActor(line1);
+	m_physicsScene->AddActor(ball1);
+	m_physicsScene->AddActor(ball2);
 
 	return true;
 }
+
+//ROCKET
+//m_physicsScene->setGravity(glm::vec2(0, -1));
+//m_physicsScene->SetTimeStep(0.01f); // Decreasing the value of this timestep will increase the accuracy of our physics simulation at the expense of increased processing time 0.01f
+//Sphere* rocket = new Sphere(glm::vec2(0, -50), glm::vec2(0, 0), 50, 4, glm::vec4(1, 0, 0, 1));
+//m_physicsScene->AddActor(rocket);
 
 void PhysicsApp::shutdown() {
 	

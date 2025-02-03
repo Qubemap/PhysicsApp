@@ -5,8 +5,9 @@
 
 enum ShapeType {
 	PLANE = 0,
-	SPHERE,
-	BOX
+	SPHERE = 1,
+	//BOX,
+	SHAPE_COUNT
 };
 
 class PhysicsObject
@@ -19,6 +20,8 @@ public:
 	virtual void FixedUpdate(glm::vec2 gravity, float timeStep) = 0;
 	virtual void Draw() = 0;
 	virtual void ResetPosition() {};
+
+	ShapeType GetShapeID() { return m_shapeID; }
 
 protected:
 	ShapeType m_shapeID;

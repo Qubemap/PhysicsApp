@@ -1,13 +1,39 @@
 #include "PhysicsScene.h"
 #include "PhysicsObject.h"
 #include "Sphere.h"
-
+#include "Plane.h"
 
 PhysicsScene::PhysicsScene()
 {
 	m_timeStep = 0.01f;
 	m_gravity = { 0, 0 };
 }
+
+PhysicsScene::~PhysicsScene()
+{
+	for (auto pActor : m_actors)
+	{
+		delete pActor;
+	}
+}
+
+void PhysicsScene::AddActor(PhysicsObject* actor)
+{
+	m_actors.push_back(actor);
+}
+
+void PhysicsScene::RemoveActor(PhysicsObject* actor)
+{
+	// make sure you consider the case where your client code asks to remove an actor that isn’t present in the scene.
+	m_actors.erase(std::find(m_actors.begin(), m_actors.end(), actor));
+}
+
+typedef bool(*fn)(PhysicsObject*, PhysicsObject*);
+static fn collisionFunctionArray[] = 
+{ 
+	PhysicsScene::Plane2Plane, PhysicsScene::Plane2Sphere,
+	PhysicsScene::Sphere2Plane, PhysicsScene::Sphere2Sphere,
+};
 
 void PhysicsScene::Update(float dt)
 {
@@ -16,69 +42,31 @@ void PhysicsScene::Update(float dt)
 	static float accumulatedTime = 0.0f;
 	accumulatedTime += dt;
 
-	static float timer = 0.0f;
-	timer += dt;
-	float timeInSecs = 0.05;
-
 	while (accumulatedTime >= m_timeStep)
 	{
-		for (auto pActor : m_actors)
-		{
-			pActor->FixedUpdate(m_gravity, m_timeStep);
-		}
-
-		Sphere* rocket = dynamic_cast<Sphere*>(m_actors[0]);
-		
-		float F = 3;
+		for (auto pActor : m_actors) { pActor->FixedUpdate(m_gravity, m_timeStep); }
 
 		accumulatedTime -= m_timeStep;
+		int actorCount = m_actors.size();
 
-		float M = 0.1f;
-
-		if (rocket->GetMass() > 20) // Repeat until all the mass has been used up
+		for (int outer = 0; outer < actorCount - 1; outer++)
 		{
-			
-
-			rocket->SetMass(rocket->GetMass() - M); // Reduce the mass of the rocket by M to simulate fuel being used
-
-			rocket->ApplyForce({0, F}); // Use applyForceToActor() to apply force to the exhaust gas from the rocket (make sure it is in the correct direction)
-
-			if (timer > timeInSecs)
+			for (int inner = outer + 1; inner < actorCount; inner++)
 			{
+				PhysicsObject* object1 = m_actors[outer];
+				PhysicsObject* object2 = m_actors[inner];
+				int shapeID1 = object1->GetShapeID();
+				int shapeID2 = object2->GetShapeID();
 
-				
-
-				glm::vec2 gasPos = rocket->GetPosition() - glm::vec2(0, rocket->GetRadius());
-
-				// Create a new sphere of mass M next to the rocket to simulate an exhaust gas particle
-				Sphere* gas = new Sphere(gasPos, glm::vec2((std::rand() % 10) - 5, 0), M, 0.3f, glm::vec4(1, 1, 0, 1));
-
-				timer -= timeInSecs;
-
-				gas->ApplyForce({ 0, -F });
-
-				AddActor(gas);
+				// using fn pointers
+				int functionID = (shapeID1 * SHAPE_COUNT) + shapeID2;
+				fn collisionFunctionPtr = collisionFunctionArray[functionID];
+				if (collisionFunctionPtr != nullptr)
+				{
+					collisionFunctionPtr(object1, object2);
+				}
 			}
 		}
-
-		
-		
-		
-		// Comment out collision check
-
-		//// Check for collisions (ideally have scene mgmt)
-		//int actorCount = m_actors.size();
-		//for (int outer = 0; outer < actorCount - 1; outer++)
-		//{
-		//	for (int inner = outer + 1; inner < actorCount; inner++)
-		//	{
-		//		PhysicsObject* object1 = m_actors[outer];
-		//		PhysicsObject* object2 = m_actors[inner];
-
-		//		// TEMP assuming shapes are spheres
-		//		Sphere2Sphere(object1, object2);
-		//	}
-		//}
 	}
 }
 
@@ -89,6 +77,48 @@ void PhysicsScene::Draw()
 		pActor->Draw();
 	}
 }
+
+bool PhysicsScene::Plane2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
+{
+	return false;
+}
+
+bool PhysicsScene::Plane2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
+{
+	return Sphere2Plane(obj2, obj1);
+}
+
+bool PhysicsScene::Sphere2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
+{
+	// D = (C . N) - D - R
+
+	//D1 is the distance of the sphere surface to the plane surface
+	//	C is the centre of the sphere
+	//	N is the normal to the plane
+	//	D is the distance of the plane from the origin
+	//	R is the radius of the sphere
+
+	Sphere* sphere = dynamic_cast<Sphere*>(obj1);
+	Plane* plane = dynamic_cast<Plane*>(obj2);
+
+	if (sphere != nullptr && plane != nullptr)
+	{
+		glm::vec2 collisionNormal = plane->getNormal();
+		float sphereToPlane = glm::dot(sphere->GetPosition(), plane->getNormal()) - plane->getDistance();
+
+		float intersection = sphere->GetRadius() - sphereToPlane;
+		float velocityOutOfPlane = glm::dot(sphere->GetVelocity(), plane->getNormal());
+		if (intersection > 0 && velocityOutOfPlane < 0)
+		{
+			// set sphere velocity to 0
+			sphere->ApplyForce(-sphere->GetVelocity() * sphere->GetMass());
+			return true;
+		}
+	}
+	return false;
+}
+
+
 
 bool PhysicsScene::Sphere2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 {
@@ -110,22 +140,7 @@ bool PhysicsScene::Sphere2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 	return false;
 }
 
-void PhysicsScene::AddActor(PhysicsObject* actor)
-{
-	m_actors.push_back(actor);
-}
 
-void PhysicsScene::RemoveActor(PhysicsObject* actor)
-{
-	// make sure you consider the case where your client code asks to remove an actor that isn’t present in the scene.
-	m_actors.erase(std::find(m_actors.begin(), m_actors.end(), actor));
-}
 
-PhysicsScene::~PhysicsScene()
-{
-	for (auto pActor : m_actors)
-	{
-		delete pActor;
-	}
-}
+
 
