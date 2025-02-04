@@ -23,19 +23,20 @@ bool PhysicsApp::startup() {
 	m_2dRenderer = new aie::Renderer2D();
 	m_font = new aie::Font("./font/consolas.ttf", 32);
 	
-	m_physicsScene = new PhysicsScene();
-	m_physicsScene->SetTimeStep(0.01f);
-	m_physicsScene->setGravity({ 0, -10 });
+	m_physicsScene = new PhysicsScene({0, -9.8});
 
-	Plane* line1 = new Plane({ 0, 1 }, -30);
-	Plane* line2 = new Plane({ 0, 2 }, -10);
-	Sphere* ball1 = new Sphere({ 0, 0 }, glm::vec2(0), 8, 8, glm::vec4(1, 0, 0, 1));
-	Sphere* ball2 = new Sphere({ 30, 2 }, glm::vec2(0), 4, 4, glm::vec4(0, 1, 0, 1));
+	Plane* line1 = new Plane({ -0.65 , 0.75 }, -30);
+	Plane* line2 = new Plane({ 0.65, 0.75 }, -30);
+	Plane* line3 = new Plane({ 0, 1 }, -20);
+	Sphere* ball1 = new Sphere({ -50, 50 }, glm::vec2(0), 100, 5, glm::vec4(1, 0, 0, 1));
+	Sphere* ball2 = new Sphere({ 30, 40 }, glm::vec2(0), 4, 4, glm::vec4(0, 1, 0, 1));
 
-	ball1->ApplyForce({100, 0});
+	//ball2->ApplyForce({ 0, -9 });
+	//ball2->ApplyForce({0, -100});
 	
 	m_physicsScene->AddActor(line1);
 	m_physicsScene->AddActor(line2);
+	//m_physicsScene->AddActor(line3);
 	m_physicsScene->AddActor(ball1);
 	m_physicsScene->AddActor(ball2);
 

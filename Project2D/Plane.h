@@ -18,7 +18,6 @@ public:
 
 	glm::vec2 getNormal() { return m_normal; }
 	float getDistance() { return m_distanceToOrigin; }
-	glm::vec4 GetColour() { return m_colour; }
 
 protected:
 	glm::vec2 m_normal;

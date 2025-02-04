@@ -9,6 +9,12 @@ PhysicsScene::PhysicsScene()
 	m_gravity = { 0, 0 };
 }
 
+PhysicsScene::PhysicsScene(glm::vec2 gravity)
+{
+	m_timeStep = 0.01f;
+	m_gravity = gravity;
+}
+
 PhysicsScene::~PhysicsScene()
 {
 	for (auto pActor : m_actors)
@@ -110,8 +116,8 @@ bool PhysicsScene::Sphere2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 		float velocityOutOfPlane = glm::dot(sphere->GetVelocity(), plane->getNormal());
 		if (intersection > 0 && velocityOutOfPlane < 0)
 		{
-			// set sphere velocity to 0
 			plane->ResolveCollision(sphere);
+			//sphere->ApplyForce(-sphere->GetVelocity() * sphere->GetMass());
 
 			return true;
 		}

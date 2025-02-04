@@ -8,8 +8,11 @@ class PhysicsObject;
 
 class PhysicsScene
 {
+
+
 public:
 	PhysicsScene();
+	PhysicsScene(glm::vec2 gravity);
 	~PhysicsScene();
 
 	void AddActor(PhysicsObject* actor);
@@ -23,8 +26,8 @@ public:
 	static bool Sphere2Plane(PhysicsObject* obj1, PhysicsObject* obj2);
 	static bool Sphere2Sphere(PhysicsObject* obj1, PhysicsObject* obj2);
 
-	void setGravity(const glm::vec2 gravity) { m_gravity = gravity; }
-	glm::vec2 GetGravity() const { return m_gravity; }
+	//void setGravity(const glm::vec2 gravity) { m_gravity = gravity; }
+	glm::vec2 GetGravity() { return m_gravity; }
 
 	void SetTimeStep(const float timeStep) { m_timeStep = timeStep; }
 	float GetTimeStep() const { return m_timeStep; }

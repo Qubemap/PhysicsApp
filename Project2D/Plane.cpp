@@ -4,16 +4,9 @@
 #include "Rigidbody.h"
 #include <iostream>
 
-
-//Plane(glm::vec2 normal, float distance) : m_normal(normal), m_distanceToOrigin(distance), m_colour({ 1, 0, 0, 1 }) {}
-//Plane(glm::vec2 normal, float distance, glm::vec4 colour) : m_normal(normal), m_distanceToOrigin(distance), m_colour(colour) {}
-
-
 Plane::Plane() : PhysicsObject(PLANE)
 {
-	m_normal = { 0, 1 };
-	m_distanceToOrigin = 0;
-	m_colour = { 1, 0, 0, 1 };
+
 }
 
 Plane::Plane(glm::vec2 normal, float distance, glm::vec4 colour) : PhysicsObject(PLANE)
@@ -25,6 +18,7 @@ Plane::Plane(glm::vec2 normal, float distance, glm::vec4 colour) : PhysicsObject
 
 void Plane::FixedUpdate(glm::vec2 gravity, float timeStep)
 {
+
 }
 
 void Plane::Draw()
@@ -49,17 +43,18 @@ void Plane::ResetPosition()
 
 void Plane::ResolveCollision(RigidBody* actor2)
 {
-	glm::vec2 normal = m_normal; // 'angle' of impact
+	glm::vec2 normal = m_normal; // plane's surface (angle)
 	glm::vec2 relativeVelocity = actor2->GetVelocity();
 
 	// if the objects are already moving apart, we don't need to do anything
 	if (glm::dot(normal, relativeVelocity) >= 0) { return; }
 
-	float elasticity = 1; // no kinetic energy lost
+	float elasticity = 1; // no kinetic energy lost at 1
 
-	float j = glm::dot(-(1 + elasticity) * (relativeVelocity), normal);
+	float j = glm::dot(-(1 + elasticity) * (relativeVelocity), normal) / (1 / actor2->GetMass());
+	//float j = -(1 + elasticity) * glm::dot(relativeVelocity, normal);
 
-	glm::vec2 force = normal * j;
+	glm::vec2 force = j * normal;
 
 	float kePre = actor2->GetKineticEnergy(); // kePre = Kinetic energy before collision
 
