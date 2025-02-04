@@ -36,11 +36,6 @@ void Plane::Draw()
 	aie::Gizmos::add2DTri(end, end - m_normal * 10.0f, start - m_normal * 10.0f, m_colour, colourFade, colourFade);
 }
 
-void Plane::ResetPosition()
-{
-
-}
-
 void Plane::ResolveCollision(RigidBody* actor2)
 {
 	glm::vec2 normal = m_normal; // plane's surface (angle)
@@ -71,4 +66,14 @@ void Plane::ResolveCollision(RigidBody* actor2)
 	{
 		std::cout << "allg man" << std::endl;
 	}
+}
+
+void Plane::ResolveCollision(RigidBody* actor2, glm::vec2 contact)
+{
+	glm::vec2 relativeVelocity = actor2->GetVelocity();
+	float e = actor2->GetElasticity();
+	float j = glm::dot(-(1 + e) * (relativeVelocity), m_normal) / (1 / actor2->GetMass());
+
+	glm::vec2 force = m_normal * j;
+	actor2->ApplyForce(force, contact - actor2->GetPosition());
 }

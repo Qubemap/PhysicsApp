@@ -2,17 +2,21 @@
 #include "PhysicsObject.h"
 #include "Sphere.h"
 #include "Plane.h"
+#include <iostream>
+
+glm::vec2 PhysicsScene::m_gravity = { 0, 0 };
 
 PhysicsScene::PhysicsScene()
 {
 	m_timeStep = 0.01f;
-	m_gravity = { 0, 0 };
+	
 }
 
 PhysicsScene::PhysicsScene(glm::vec2 gravity)
 {
 	m_timeStep = 0.01f;
 	m_gravity = gravity;
+	
 }
 
 PhysicsScene::~PhysicsScene()
@@ -50,6 +54,7 @@ void PhysicsScene::Update(float dt)
 
 	while (accumulatedTime >= m_timeStep)
 	{
+		std::cout << GetTotalEnergy() << std::endl;
 		for (auto pActor : m_actors) { pActor->FixedUpdate(m_gravity, m_timeStep); }
 
 		accumulatedTime -= m_timeStep;
@@ -84,6 +89,17 @@ void PhysicsScene::Draw()
 	}
 }
 
+float PhysicsScene::GetTotalEnergy()
+{
+	float total = 0;
+	for (auto it = m_actors.begin(); it != m_actors.end(); it++)
+	{
+		PhysicsObject* obj = *it;
+		total += obj->GetEnergy();
+	}
+	return total;
+}
+
 bool PhysicsScene::Plane2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 {
 	return false;
@@ -116,7 +132,8 @@ bool PhysicsScene::Sphere2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 		float velocityOutOfPlane = glm::dot(sphere->GetVelocity(), plane->getNormal());
 		if (intersection > 0 && velocityOutOfPlane < 0)
 		{
-			plane->ResolveCollision(sphere);
+			glm::vec2 contact = sphere->GetPosition() + (collisionNormal * -sphere->GetRadius());
+			plane->ResolveCollision(sphere, contact);
 			//sphere->ApplyForce(-sphere->GetVelocity() * sphere->GetMass());
 
 			return true;
@@ -124,8 +141,6 @@ bool PhysicsScene::Sphere2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 	}
 	return false;
 }
-
-
 
 bool PhysicsScene::Sphere2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 {
