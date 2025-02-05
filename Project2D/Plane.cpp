@@ -53,7 +53,7 @@ void Plane::ResolveCollision(RigidBody* actor2)
 
 	float kePre = actor2->GetKineticEnergy(); // kePre = Kinetic energy before collision
 
-	actor2->ApplyForce(force);
+	actor2->ApplyForce(force, {0,0});
 
 	float kePost = actor2->GetKineticEnergy();
 
@@ -70,10 +70,34 @@ void Plane::ResolveCollision(RigidBody* actor2)
 
 void Plane::ResolveCollision(RigidBody* actor2, glm::vec2 contact)
 {
-	glm::vec2 relativeVelocity = actor2->GetVelocity();
-	float e = actor2->GetElasticity();
-	float j = glm::dot(-(1 + e) * (relativeVelocity), m_normal) / (1 / actor2->GetMass());
+	// position at which we'll apply the force relative to the center of mass
+	glm::vec2 localContact = contact - actor2->GetPosition();
+	// plane isn't moving, so rel velocity is just the other object's velocity
+	glm::vec2 relativeVelocity = actor2->GetVelocity() + actor2->GetAngularVelocity() * glm::vec2(-localContact.y, localContact.x);
+	float velocityIntoPlane = glm::dot(relativeVelocity, m_normal);
+
+	float e = 1; //actor2->GetElasticity();
+	float r = glm::dot(localContact, glm::vec2(m_normal.y, -m_normal.x));
+	float mass0 = 1.0f / (1.0f / actor2->GetMass() + (r * r) / actor2->GetMoment());
+
+	float j = -(1 + e) * velocityIntoPlane * mass0;
+	// glm::dot(-(1 + e) * (relativeVelocity), m_normal) / (1 / actor2->GetMass());
 
 	glm::vec2 force = m_normal * j;
+	
+	float kePre = actor2->GetKineticEnergy(); // kePre = Kinetic energy before collision
+
 	actor2->ApplyForce(force, contact - actor2->GetPosition());
+
+	float kePost = actor2->GetKineticEnergy();
+
+	float deltaKe = kePost - kePre;
+	if (deltaKe > kePost * 0.01f)
+	{
+		std::cout << "Kinetic Energy discrepancy greater than 1% detected!" << std::endl;
+	}
+	else
+	{
+		std::cout << "allg man" << std::endl;
+	}
 }

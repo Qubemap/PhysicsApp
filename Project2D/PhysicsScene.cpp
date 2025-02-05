@@ -54,7 +54,7 @@ void PhysicsScene::Update(float dt)
 
 	while (accumulatedTime >= m_timeStep)
 	{
-		std::cout << GetTotalEnergy() << std::endl;
+		//std::cout << GetTotalEnergy() << std::endl;
 		for (auto pActor : m_actors) { pActor->FixedUpdate(m_gravity, m_timeStep); }
 
 		accumulatedTime -= m_timeStep;
@@ -152,7 +152,8 @@ bool PhysicsScene::Sphere2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 	{
 		if ((sphere1->GetRadius() + sphere2->GetRadius()) > glm::distance(sphere1->GetPosition(), sphere2->GetPosition())) // if overlap
 		{
-			sphere1->ResolveCollision(sphere2);
+			glm::vec2 contact = 0.5f * (sphere1->GetPosition() + sphere2->GetPosition());
+			sphere1->ResolveCollision(sphere2, contact);
 
 			return true;
 		}

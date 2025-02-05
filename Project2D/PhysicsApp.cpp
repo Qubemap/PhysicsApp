@@ -22,15 +22,15 @@ bool PhysicsApp::startup() {
 
 	m_2dRenderer = new aie::Renderer2D();
 	m_font = new aie::Font("./font/consolas.ttf", 32);
-
-	m_physicsScene = new PhysicsScene({0, -9.82});
+	glm::vec2 gravity = { 0, -9.8f };
+	m_physicsScene = new PhysicsScene(gravity);
 	//m_physicsScene->SetGravity({ 0, -9.82 });
 
 	Plane* line1 = new Plane({ -0.65 , 0.75 }, -30);
 	Plane* line2 = new Plane({ 0.65, 0.75 }, -30);
 	Plane* line3 = new Plane({ 0, 1 }, -25);
-	Sphere* ball1 = new Sphere({ -50, 50 }, glm::vec2(0), 100, 5, glm::vec4(1, 0, 0, 1));
-	Sphere* ball2 = new Sphere({ 30, 40 }, glm::vec2(0), 4, 4, glm::vec4(0, 1, 0, 1));
+	Sphere* ball1 = new Sphere({ -50, 50 }, glm::vec2(0), 100, 5, glm::vec4(1, 0, 0, 1), 0.2);
+	Sphere* ball2 = new Sphere({ 30, 40 }, glm::vec2(0), 4, 4, glm::vec4(0, 1, 0, 1), 0.2);
 
 	//ball2->ApplyForce({ 0, -9 });
 	//ball2->ApplyForce({0, -100});

@@ -6,7 +6,7 @@ class RigidBody : public PhysicsObject
 {
 public:
 	RigidBody();
-	RigidBody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, float orientation, float mass);
+	RigidBody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity);
 	~RigidBody() {}
 
 	virtual void FixedUpdate(glm::vec2 gravity, float timeStep);
@@ -23,9 +23,10 @@ public:
 	float GetKineticEnergy();
 	float GetEnergy() override;
 	float GetPotentialEnergy();
-	float GetOrientation() { return m_orientation; }
 	float GetAngularVelocity() { return m_angularVelocity; }
 	float GetMoment() { return m_moment; }
+	float GetElasticity() { return m_elasticity; }
+	void SetElasticity(float e) { m_elasticity = e; }
 
 protected:
 	glm::vec2 m_position;
@@ -34,4 +35,5 @@ protected:
 	float m_orientation; // 2D, only a single float needed
 	float m_angularVelocity;
 	float m_moment;
+	float m_elasticity;
 };

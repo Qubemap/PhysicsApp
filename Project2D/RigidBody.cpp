@@ -11,20 +11,23 @@ RigidBody::RigidBody()
 	m_orientation = 0.0f;
 	m_mass = 0.0f;
 	m_angularVelocity = 0;
-	m_moment = 0;
+	m_elasticity = 1;
 }
 
-RigidBody::RigidBody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, float orientation, float mass)
+RigidBody::RigidBody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity)
 {
 	m_shapeID = shapeID;
 	m_position = position;
 	m_velocity = velocity;
 	m_orientation = orientation;
 	m_mass = mass;
+	m_elasticity = elasticity;
+	m_angularVelocity = 0;
 }
 
 void RigidBody::ApplyForce(glm::vec2 force, glm::vec2 pos)
 {
+	// using getMass() and getMoment() here in case we ever get it to do something more than just return mass
 	m_velocity += force / GetMass();
 	m_angularVelocity += (force.y * pos.x - force.x * pos.y) / GetMoment();
 }
@@ -35,7 +38,7 @@ void RigidBody::ApplyForce(glm::vec2 force, glm::vec2 pos)
 //	ApplyForce(force * glm::vec2(-1, -1));
 //}
 
-void RigidBody::ResolveCollision(RigidBody* actor2, glm::vec2 contact, glm::vec2* collisionNormal = nullptr)
+void RigidBody::ResolveCollision(RigidBody* actor2, glm::vec2 contact, glm::vec2* collisionNormal)
 {
 	// find vector between centres, or use provided directionof force, and make sure it's normalised
 	glm::vec2 normal = glm::normalize(collisionNormal ? *collisionNormal : actor2->m_position - m_position);
@@ -55,6 +58,9 @@ void RigidBody::ResolveCollision(RigidBody* actor2, glm::vec2 contact, glm::vec2
 
 	if (v1 > v2)
 	{
+		// calculate the effective mass at contact point for each object
+		// ie how much the contact point will move due to the force applied.
+
 		float mass1 = 1.0f / (1.0f / m_mass + (r1 * r1) / m_moment);
 		float mass2 = 1.0f / (1.0f / actor2->m_mass + (r2 * r2) / actor2->m_moment);
 
@@ -86,7 +92,8 @@ float RigidBody::GetEnergy()
 void RigidBody::FixedUpdate(glm::vec2 gravity, float timeStep)
 {
 	m_position += m_velocity * timeStep;
-	ApplyForce(gravity * m_mass * timeStep);
+	ApplyForce(gravity * m_mass * timeStep, {0,0});
 
 	m_orientation += m_angularVelocity * timeStep;
+	//std::cout << m_orientation << std::endl;
 }
