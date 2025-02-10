@@ -15,7 +15,7 @@ PhysicsScene::PhysicsScene()
 
 PhysicsScene::PhysicsScene(glm::vec2 gravity)
 {
-	m_timeStep = 0.01f;
+	m_timeStep = 1.f / 60.f;
 	m_gravity = gravity;
 	
 }

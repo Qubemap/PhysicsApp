@@ -7,6 +7,7 @@
 #include "Sphere.h"
 #include "Plane.h"
 #include "Box.h"
+#include "Presets.h"
 
 PhysicsApp::PhysicsApp() {
 
@@ -23,26 +24,26 @@ bool PhysicsApp::startup() {
 
 	m_2dRenderer = new aie::Renderer2D();
 	m_font = new aie::Font("./font/consolas.ttf", 32);
-	glm::vec2 gravity = { 0, -9.8f };
+	glm::vec2 gravity = { 0, 0 };
 	m_physicsScene = new PhysicsScene(gravity);
-	//m_physicsScene->SetGravity({ 0, -9.82 });
-
+	m_physicsScene->SetGravity({ 0, -9.8});
+	
 	Plane* line1 = new Plane({ -0.65 , 0.75 }, -30);
 	Plane* line2 = new Plane({ 0.65, 0.75 }, -30);
 	Plane* line3 = new Plane({ 0, 1 }, -25);
-	Sphere* ball1 = new Sphere({ -50, 50 }, glm::vec2(0), 100, 5, glm::vec4(1, 0, 0, 1), 0.2);
-	Sphere* ball2 = new Sphere({ 30, 40 }, glm::vec2(0), 4, 4, glm::vec4(0, 1, 0, 1), 0.2);
-	Box* box1 = new Box({ -10, 60 }, glm::vec2(0), 20, 10, 20, 45, glm::vec4(0, 1, 0, 1), 0.2);
-
-	//ball2->ApplyForce({ 0, -9 });
-	//ball2->ApplyForce({0, -100});
+	
+	Sphere* ball1 = new Sphere({ -20, 0 }, glm::vec2(-10, 0), 100, 5, glm::vec4(1, 0, 0, 1), 0.2);
+	Sphere* ball2 = new Sphere({ 30, 40 }, glm::vec2(0, -30), 4, 4, glm::vec4(0, 1, 0, 1), 0.2);
+	Box* box1 = new Box({ -10, 60 }, glm::vec2(0, -20), 100, 10, 20, 45, glm::vec4(0, 1, 0, 1), 0.2);
+	Basketball* bball = new Basketball({ -20, 0 }, 4);
+	m_physicsScene->AddActor(bball);
 	
 	m_physicsScene->AddActor(line1);
 	m_physicsScene->AddActor(line2);
 	m_physicsScene->AddActor(line3);
-	m_physicsScene->AddActor(ball1);
-	m_physicsScene->AddActor(ball2);
-	m_physicsScene->AddActor(box1);
+	//m_physicsScene->AddActor(ball1);
+	//m_physicsScene->AddActor(ball2);
+	//m_physicsScene->AddActor(box1);
 
 	return true;
 }

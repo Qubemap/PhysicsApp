@@ -10,7 +10,7 @@ public:
 
 	virtual void Draw();
 
-	float const GetRadius() { return m_radius; }
+	float GetRadius() { return m_radius; }
 	glm::vec4 GetColour() { return m_colour; }
 
 protected:

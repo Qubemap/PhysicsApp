@@ -2,6 +2,8 @@
 #include <iostream>
 #include "PhysicsScene.h"
 
+float MIN_LINEAR_THRESHOLD = 0.1;
+float MIN_ANGULAR_THRESHOLD = 0.01;
 
 RigidBody::RigidBody()
 {
@@ -12,6 +14,9 @@ RigidBody::RigidBody()
 	m_mass = 0.0f;
 	m_angularVelocity = 0;
 	m_elasticity = 1;
+	m_angularDrag = 0.3f;
+	m_linearDrag = 0.3f;
+	m_moment = 1;
 }
 
 RigidBody::RigidBody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity)
@@ -23,6 +28,12 @@ RigidBody::RigidBody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, 
 	m_mass = mass;
 	m_elasticity = elasticity;
 	m_angularVelocity = 0;
+	m_angularDrag = 0.9f;
+	m_linearDrag = 0.3f;
+	m_moment = 1;
+
+	std::cout << "shape: " << shapeID << std::endl;
+
 }
 
 void RigidBody::ApplyForce(glm::vec2 force, glm::vec2 pos)
@@ -94,6 +105,19 @@ void RigidBody::FixedUpdate(glm::vec2 gravity, float timeStep)
 	m_position += m_velocity * timeStep;
 	ApplyForce(gravity * m_mass * timeStep, {0,0});
 
+	m_velocity -= m_velocity * m_linearDrag * timeStep;
+	m_angularVelocity -= m_angularVelocity * m_angularDrag * timeStep;
+
 	m_orientation += m_angularVelocity * timeStep;
-	//std::cout << m_orientation << std::endl;
+	
+	if (length(m_velocity) < MIN_LINEAR_THRESHOLD)
+	{
+		m_velocity = glm::vec2(0, 0);
+	}
+	if (abs(m_angularVelocity) < MIN_ANGULAR_THRESHOLD)
+	{
+		m_angularVelocity = 0;
+	}
+
+
 }

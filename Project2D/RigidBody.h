@@ -23,11 +23,13 @@ public:
 	float GetPotentialEnergy();
 	float GetAngularVelocity() const { return m_angularVelocity; }
 	float GetMoment() const { return m_moment; }
-	float GetElasticity() const { return m_elasticity; }
+	float GetLinearDrag() const { return m_linearDrag; }
+	float GetAngularDrag() const { return m_angularDrag; }
 
 	void SetVelocity(glm::vec2 velocity) { m_velocity = velocity; }
 	void SetMass(float mass) { m_mass = mass; }
-	void SetElasticity(float e) { m_elasticity = e; }
+	void SetLinearDrag(float linearDrag) { m_linearDrag = linearDrag; }
+	void SetAngularDrag(float angularDrag) { m_angularDrag = angularDrag; }
 
 protected:
 	glm::vec2 m_position;
@@ -36,5 +38,6 @@ protected:
 	float m_orientation; // 2D, only a single float needed
 	float m_angularVelocity;
 	float m_moment;
-	float m_elasticity;
+	float m_linearDrag;
+	float m_angularDrag;
 };

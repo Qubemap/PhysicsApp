@@ -13,8 +13,8 @@ enum ShapeType {
 class PhysicsObject
 {
 protected:
-	PhysicsObject() {}
-	PhysicsObject(ShapeType a_shapeID) : m_shapeID(a_shapeID) {}
+	PhysicsObject() { m_elasticity = 1; }
+	PhysicsObject(ShapeType a_shapeID, float elasticity = 1) : m_shapeID(a_shapeID), m_elasticity(elasticity) {}
 
 public:
 	virtual void FixedUpdate(glm::vec2 gravity, float timeStep) = 0;
@@ -23,7 +23,11 @@ public:
 	virtual float GetEnergy() { return 0; }
 
 	ShapeType GetShapeID() { return m_shapeID; }
+	float GetElasticity() const { return m_elasticity; }
+
+	void SetElasticity(float elasticity) { m_elasticity = elasticity; }
 
 protected:
 	ShapeType m_shapeID;
+	float m_elasticity;
 };
