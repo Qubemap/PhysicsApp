@@ -14,18 +14,19 @@ public:
 	//void ApplyForceToActor(RigidBody* actor2, glm::vec2 force);
 	void ResolveCollision(RigidBody* actor2, glm::vec2 contact, glm::vec2* collisionNormal=nullptr);
 	
-	glm::vec2 GetPosition() { return m_position; }
-	float GetOrientation() { return m_orientation; }
-	glm::vec2 GetVelocity() { return m_velocity; }
-	void SetVelocity(glm::vec2 velocity) { m_velocity = velocity; }
-	float GetMass() { return m_mass; }
-	void SetMass(float mass) { m_mass = mass; }
+	glm::vec2 GetPosition() const { return m_position; }
+	float GetOrientation() const { return m_orientation; }
+	glm::vec2 GetVelocity() const { return m_velocity; }
+	float GetMass() const { return m_mass; }
 	float GetKineticEnergy();
 	float GetEnergy() override;
 	float GetPotentialEnergy();
-	float GetAngularVelocity() { return m_angularVelocity; }
-	float GetMoment() { return m_moment; }
-	float GetElasticity() { return m_elasticity; }
+	float GetAngularVelocity() const { return m_angularVelocity; }
+	float GetMoment() const { return m_moment; }
+	float GetElasticity() const { return m_elasticity; }
+
+	void SetVelocity(glm::vec2 velocity) { m_velocity = velocity; }
+	void SetMass(float mass) { m_mass = mass; }
 	void SetElasticity(float e) { m_elasticity = e; }
 
 protected:

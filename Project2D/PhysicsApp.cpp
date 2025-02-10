@@ -6,6 +6,7 @@
 #include <Gizmos.h>
 #include "Sphere.h"
 #include "Plane.h"
+#include "Box.h"
 
 PhysicsApp::PhysicsApp() {
 
@@ -31,6 +32,7 @@ bool PhysicsApp::startup() {
 	Plane* line3 = new Plane({ 0, 1 }, -25);
 	Sphere* ball1 = new Sphere({ -50, 50 }, glm::vec2(0), 100, 5, glm::vec4(1, 0, 0, 1), 0.2);
 	Sphere* ball2 = new Sphere({ 30, 40 }, glm::vec2(0), 4, 4, glm::vec4(0, 1, 0, 1), 0.2);
+	Box* box1 = new Box({ -10, 60 }, glm::vec2(0), 20, 10, 20, 45, glm::vec4(0, 1, 0, 1), 0.2);
 
 	//ball2->ApplyForce({ 0, -9 });
 	//ball2->ApplyForce({0, -100});
@@ -40,6 +42,7 @@ bool PhysicsApp::startup() {
 	m_physicsScene->AddActor(line3);
 	m_physicsScene->AddActor(ball1);
 	m_physicsScene->AddActor(ball2);
+	m_physicsScene->AddActor(box1);
 
 	return true;
 }

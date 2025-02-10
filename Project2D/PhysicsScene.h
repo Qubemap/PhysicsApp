@@ -9,7 +9,6 @@ class PhysicsObject;
 class PhysicsScene
 {
 
-
 public:
 	PhysicsScene();
 	PhysicsScene(glm::vec2 gravity);
@@ -23,8 +22,14 @@ public:
 
 	static bool Plane2Plane(PhysicsObject* obj1, PhysicsObject* obj2);
 	static bool Plane2Sphere(PhysicsObject* obj1, PhysicsObject* obj2);
+	static bool Plane2Box(PhysicsObject* obj1, PhysicsObject* obj2);
 	static bool Sphere2Plane(PhysicsObject* obj1, PhysicsObject* obj2);
 	static bool Sphere2Sphere(PhysicsObject* obj1, PhysicsObject* obj2);
+	static bool Sphere2Box(PhysicsObject* obj1, PhysicsObject* obj2);
+	static bool Box2Plane(PhysicsObject* obj1, PhysicsObject* obj2);
+	static bool Box2Sphere(PhysicsObject* obj1, PhysicsObject* obj2);
+	static bool Box2Box(PhysicsObject* obj1, PhysicsObject* obj2);
+
 
 	//void setGravity(const glm::vec2 gravity) { m_gravity = gravity; }
 	static glm::vec2 GetGravity() { return m_gravity; }

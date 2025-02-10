@@ -81,7 +81,7 @@ float RigidBody::GetPotentialEnergy()
 
 float RigidBody::GetKineticEnergy()
 {
-	return (0.5 * m_mass * (m_velocity * m_velocity).length());
+	return 0.5f * (m_mass * glm::dot(m_velocity, m_velocity) + m_moment * m_angularVelocity * m_angularVelocity);
 }
 
 float RigidBody::GetEnergy()
