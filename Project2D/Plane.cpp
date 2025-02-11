@@ -42,11 +42,10 @@ void Plane::ResolveCollision(RigidBody* actor2, glm::vec2 contact)
 	glm::vec2 localContact = contact - actor2->GetPosition();
 	// the plane isn't moving, so the relative velocity is just actor2's velocity
 	//at the contact point
-		glm::vec2 vRel = actor2->GetVelocity() + actor2->GetAngularVelocity() * glm::vec2(-
-			localContact.y, localContact.x);
+	glm::vec2 vRel = actor2->GetVelocity() + actor2->GetAngularVelocity() * glm::vec2(-localContact.y, localContact.x);
 	float velocityIntoPlane = glm::dot(vRel, m_normal);
 	// perfectly elasticity collisions for now
-	float e = (GetElasticity() * actor2->GetElasticity()) / 2;
+	float e = actor2->GetElasticity();
 	// this is the perpendicular distance we apply the force at relative to the COM, so Torque = F * r
 	float r = glm::dot(localContact, glm::vec2(m_normal.y, -m_normal.x));
 	// work out the "effective mass" - this is a combination of moment of
@@ -57,16 +56,17 @@ void Plane::ResolveCollision(RigidBody* actor2, glm::vec2 contact)
 	glm::vec2 force = m_normal * j;
 	float kePre = actor2->GetKineticEnergy();
 	actor2->ApplyForce(force, contact - actor2->GetPosition());
+	float pen = glm::dot(contact, m_normal) - m_distanceToOrigin;
 	float kePost = actor2->GetKineticEnergy();
 	float deltaKE = kePost - kePre;
 	if (deltaKE > kePost * 0.01f)
 	{
 		std::cout << "Kinetic Energy discrepancy greater than 1% detected!";
 	}
-	else
+	/*else
 	{
 		std::cout << "allg man" << std::endl;
-	}
+	}*/
 }
 
 //void Plane::ResolveCollision(RigidBody* actor2, glm::vec2 contact)

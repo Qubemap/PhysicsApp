@@ -5,6 +5,7 @@
 
 
 class PhysicsObject;
+class RigidBody;
 
 class PhysicsScene
 {
@@ -19,6 +20,7 @@ public:
 	void Update(float dt);
 	void Draw();
 	float GetTotalEnergy();
+	static void ApplyContactForces(RigidBody* body1, RigidBody* body2, glm::vec2 norm, float pen);
 
 	static bool Plane2Plane(PhysicsObject* obj1, PhysicsObject* obj2);
 	static bool Plane2Sphere(PhysicsObject* obj1, PhysicsObject* obj2);

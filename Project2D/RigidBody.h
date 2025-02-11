@@ -12,17 +12,17 @@ public:
 	virtual void FixedUpdate(glm::vec2 gravity, float timeStep);
 	void ApplyForce(glm::vec2 force, glm::vec2 pos);
 	//void ApplyForceToActor(RigidBody* actor2, glm::vec2 force);
-	void ResolveCollision(RigidBody* actor2, glm::vec2 contact, glm::vec2* collisionNormal=nullptr);
+	void ResolveCollision(RigidBody* actor2, glm::vec2 contact, glm::vec2* collisionNormal=nullptr, float pen = 0);
 	
 	glm::vec2 GetPosition() const { return m_position; }
 	float GetOrientation() const { return m_orientation; }
 	glm::vec2 GetVelocity() const { return m_velocity; }
-	float GetMass() const { return m_mass; }
+	float GetMass() const { return m_isKinematic ? 10000000 : m_mass; }
 	float GetKineticEnergy();
 	float GetEnergy() override;
 	float GetPotentialEnergy();
 	float GetAngularVelocity() const { return m_angularVelocity; }
-	float GetMoment() const { return m_moment; }
+	float GetMoment() const { return m_isKinematic ? 10000000 : m_moment; }
 	float GetLinearDrag() const { return m_linearDrag; }
 	float GetAngularDrag() const { return m_angularDrag; }
 
@@ -30,6 +30,7 @@ public:
 	void SetMass(float mass) { m_mass = mass; }
 	void SetLinearDrag(float linearDrag) { m_linearDrag = linearDrag; }
 	void SetAngularDrag(float angularDrag) { m_angularDrag = angularDrag; }
+	void SetPosition(glm::vec2 position) { m_position = position; }
 
 protected:
 	glm::vec2 m_position;
@@ -40,4 +41,5 @@ protected:
 	float m_moment;
 	float m_linearDrag;
 	float m_angularDrag;
+	bool m_isKinematic;
 };

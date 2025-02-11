@@ -4,8 +4,10 @@
 #include "Plane.h"
 #include "Box.h"
 #include <iostream>
+#include "RigidBody.h"
 
 glm::vec2 PhysicsScene::m_gravity = { 0, 0 };
+
 
 PhysicsScene::PhysicsScene()
 {
@@ -102,6 +104,20 @@ float PhysicsScene::GetTotalEnergy()
 	return total;
 }
 
+void PhysicsScene::ApplyContactForces(RigidBody* body1, RigidBody* body2, glm::vec2 norm, float pen)
+{
+	float body2Mass = body2 ? body2->GetMass() : INT_MAX;
+
+	float body1Factor = body2Mass / (body1->GetMass() + body2Mass);
+
+	body1->SetPosition(body1->GetPosition() - body1Factor * norm * pen);
+
+	if (body2)
+	{
+		body2->SetPosition(body2->GetPosition() + (1 - body1Factor) * norm * pen);
+	}
+}
+
 bool PhysicsScene::Plane2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 {
 	return false;
@@ -196,11 +212,11 @@ bool PhysicsScene::Sphere2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 	// if we are successful then test for collision
 	if (sphere1 != nullptr && sphere2 != nullptr)
 	{
-		if ((sphere1->GetRadius() + sphere2->GetRadius()) > glm::distance(sphere1->GetPosition(), sphere2->GetPosition())) // if overlap
+		float penetration = sphere1->GetRadius() + sphere2->GetRadius() - glm::distance(sphere1->GetPosition(), sphere2->GetPosition());
+		if (penetration > 0)
 		{
 			glm::vec2 contact = 0.5f * (sphere1->GetPosition() + sphere2->GetPosition());
-			sphere1->ResolveCollision(sphere2, contact);
-
+			sphere1->ResolveCollision(sphere2, contact, nullptr, penetration);
 			return true;
 		}
 	}
@@ -237,7 +253,8 @@ bool PhysicsScene::Box2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 		// and convert back into world coordinates
 		glm::vec2 closestPointOnBoxWorld = box->GetPosition() + closestPointOnBoxBox.x * box->GetLocalX() + closestPointOnBoxBox.y * box->GetLocalY();
 		glm::vec2 circleToBox = sphere->GetPosition() - closestPointOnBoxWorld;
-		if (glm::length(circleToBox) < sphere->GetRadius())
+		float pen = sphere->GetRadius() - glm::length(circleToBox);
+		if (pen > 0)
 		{
 			glm::vec2 direction = glm::normalize(circleToBox);
 			glm::vec2 contact = closestPointOnBoxWorld;
@@ -263,7 +280,7 @@ bool PhysicsScene::Box2Box(PhysicsObject * obj1, PhysicsObject * obj2) {
 		}
 		if (pen > 0) 
 		{
-			box1->ResolveCollision(box2, contact / float(numContacts), &norm);
+			box1->ResolveCollision(box2, contact / float(numContacts), &norm, pen);
 		}
 		return true;
 	}
