@@ -9,7 +9,7 @@ Plane::Plane() : PhysicsObject(PLANE)
 
 }
 
-Plane::Plane(glm::vec2 normal, float distance, glm::vec4 colour) : PhysicsObject(PLANE)
+Plane::Plane(glm::vec2 normal, float distance, glm::vec4 colour, float elasticity) : PhysicsObject(PLANE, elasticity)
 {
 	m_normal = normal;
 	m_distanceToOrigin = distance;
@@ -46,7 +46,7 @@ void Plane::ResolveCollision(RigidBody* actor2, glm::vec2 contact)
 			localContact.y, localContact.x);
 	float velocityIntoPlane = glm::dot(vRel, m_normal);
 	// perfectly elasticity collisions for now
-	float e = 1;
+	float e = (GetElasticity() * actor2->GetElasticity()) / 2;
 	// this is the perpendicular distance we apply the force at relative to the COM, so Torque = F * r
 	float r = glm::dot(localContact, glm::vec2(m_normal.y, -m_normal.x));
 	// work out the "effective mass" - this is a combination of moment of
@@ -60,7 +60,13 @@ void Plane::ResolveCollision(RigidBody* actor2, glm::vec2 contact)
 	float kePost = actor2->GetKineticEnergy();
 	float deltaKE = kePost - kePre;
 	if (deltaKE > kePost * 0.01f)
-	std::cout << "Kinetic Energy discrepancy greater than 1% detected!";
+	{
+		std::cout << "Kinetic Energy discrepancy greater than 1% detected!";
+	}
+	else
+	{
+		std::cout << "allg man" << std::endl;
+	}
 }
 
 //void Plane::ResolveCollision(RigidBody* actor2, glm::vec2 contact)
@@ -97,34 +103,34 @@ void Plane::ResolveCollision(RigidBody* actor2, glm::vec2 contact)
 //	}
 //}
 
-void Plane::ResolveCollision(RigidBody* actor2)
-{
-	glm::vec2 normal = m_normal; // plane's surface (angle)
-	glm::vec2 relativeVelocity = actor2->GetVelocity();
-
-	// if the objects are already moving apart, we don't need to do anything
-	if (glm::dot(normal, relativeVelocity) >= 0) { return; }
-
-	float elasticity = 1; // no kinetic energy lost at 1
-
-	float j = glm::dot(-(1 + elasticity) * (relativeVelocity), normal) / (1 / actor2->GetMass());
-	//float j = -(1 + elasticity) * glm::dot(relativeVelocity, normal);
-
-	glm::vec2 force = j * normal;
-
-	float kePre = actor2->GetKineticEnergy(); // kePre = Kinetic energy before collision
-
-	actor2->ApplyForce(force, { 0,0 });
-
-	float kePost = actor2->GetKineticEnergy();
-
-	float deltaKe = kePost - kePre;
-	if (deltaKe > kePost * 0.01f)
-	{
-		std::cout << "Kinetic Energy discrepancy greater than 1% detected!" << std::endl;
-	}
-	else
-	{
-		std::cout << "allg man" << std::endl;
-	}
-}
+//void Plane::ResolveCollision(RigidBody* actor2)
+//{
+//	glm::vec2 normal = m_normal; // plane's surface (angle)
+//	glm::vec2 relativeVelocity = actor2->GetVelocity();
+//
+//	// if the objects are already moving apart, we don't need to do anything
+//	if (glm::dot(normal, relativeVelocity) >= 0) { return; }
+//
+//	float elasticity = (GetElasticity() + actor2->GetElasticity() / 2); // no kinetic energy lost at 1
+//
+//	float j = glm::dot(-(1 + elasticity) * (relativeVelocity), normal) / (1 / actor2->GetMass());
+//	//float j = -(1 + elasticity) * glm::dot(relativeVelocity, normal);
+//
+//	glm::vec2 force = j * normal;
+//
+//	float kePre = actor2->GetKineticEnergy(); // kePre = Kinetic energy before collision
+//
+//	actor2->ApplyForce(force, { 0,0 });
+//
+//	float kePost = actor2->GetKineticEnergy();
+//
+//	float deltaKe = kePost - kePre;
+//	if (deltaKe > kePost * 0.01f)
+//	{
+//		std::cout << "Kinetic Energy discrepancy greater than 1% detected!" << std::endl;
+//	}
+//	else
+//	{
+//		std::cout << "allg man" << std::endl;
+//	}
+//}

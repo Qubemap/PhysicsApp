@@ -5,7 +5,7 @@
 class Box : public RigidBody
 {
 public:
-	Box(glm::vec2 position, glm::vec2 velocity, float mass, float height, float width, float orientation, glm::vec4 colour, float elasticity);
+	Box(glm::vec2 position, glm::vec2 velocity, float mass, float height, float width, float orientation, glm::vec4 colour, float elasticity, float linearDrag, float angularDrag);
 
 	virtual void FixedUpdate(glm::vec2 gravity, float timeStep) override;
 	virtual void Draw();

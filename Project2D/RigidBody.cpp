@@ -19,17 +19,17 @@ RigidBody::RigidBody()
 	m_moment = 1;
 }
 
-RigidBody::RigidBody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity)
+RigidBody::RigidBody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity, float linearDrag, float angularDrag) : PhysicsObject(shapeID, elasticity)
 {
-	m_shapeID = shapeID;
+	//m_shapeID = shapeID;
 	m_position = position;
 	m_velocity = velocity;
 	m_orientation = orientation;
 	m_mass = mass;
-	m_elasticity = elasticity;
+	//m_elasticity = elasticity;
 	m_angularVelocity = 0;
-	m_angularDrag = 0.9f;
-	m_linearDrag = 0.3f;
+	m_angularDrag = angularDrag;
+	m_linearDrag = linearDrag;
 	m_moment = 1;
 
 	std::cout << "shape: " << shapeID << std::endl;
@@ -75,13 +75,15 @@ void RigidBody::ResolveCollision(RigidBody* actor2, glm::vec2 contact, glm::vec2
 		float mass1 = 1.0f / (1.0f / m_mass + (r1 * r1) / m_moment);
 		float mass2 = 1.0f / (1.0f / actor2->m_mass + (r2 * r2) / actor2->m_moment);
 
-		float elasticity = 1;
+		float elasticity = (GetElasticity() + actor2->GetElasticity()) / 2.0f;
 
 		glm::vec2 force = (1.0f + elasticity) * mass1 * mass2 / (mass1 + mass2) * (v1 - v2) * normal;
 
 		// apply equal and opposite forces
 		ApplyForce(-force, contact - m_position);
 		actor2->ApplyForce(force, contact - actor2->m_position);
+
+		std::cout << "rigidbody collision" << std::endl;
 	}
 }
 
