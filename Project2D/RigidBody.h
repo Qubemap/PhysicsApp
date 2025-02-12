@@ -13,6 +13,7 @@ public:
 	void ApplyForce(glm::vec2 force, glm::vec2 pos);
 	//void ApplyForceToActor(RigidBody* actor2, glm::vec2 force);
 	void ResolveCollision(RigidBody* actor2, glm::vec2 contact, glm::vec2* collisionNormal=nullptr, float pen = 0);
+	glm::vec2 ToWorld(glm::vec2 localPos);
 	
 	glm::vec2 GetPosition() const { return m_position; }
 	float GetOrientation() const { return m_orientation; }
@@ -25,12 +26,16 @@ public:
 	float GetMoment() const { return m_isKinematic ? 10000000 : m_moment; }
 	float GetLinearDrag() const { return m_linearDrag; }
 	float GetAngularDrag() const { return m_angularDrag; }
+	glm::vec2 GetLocalX() const { return m_localX; }
+	glm::vec2 GetLocalY() const { return m_localY; }
 
 	void SetVelocity(glm::vec2 velocity) { m_velocity = velocity; }
 	void SetMass(float mass) { m_mass = mass; }
 	void SetLinearDrag(float linearDrag) { m_linearDrag = linearDrag; }
 	void SetAngularDrag(float angularDrag) { m_angularDrag = angularDrag; }
 	void SetPosition(glm::vec2 position) { m_position = position; }
+	void SetOrientation(float orientation) { m_orientation = orientation; }
+	void SetKinematic(bool isKinematic) { m_isKinematic = isKinematic; }
 
 protected:
 	glm::vec2 m_position;
@@ -38,8 +43,10 @@ protected:
 	float m_mass;
 	float m_orientation; // 2D, only a single float needed
 	float m_angularVelocity;
-	float m_moment;
-	float m_linearDrag;
-	float m_angularDrag;
-	bool m_isKinematic;
+	float m_moment; 
+	float m_linearDrag; 
+	float m_angularDrag; // rotational drag
+	bool m_isKinematic; // if true, object will not move
+	glm::vec2 m_localX; // local x axis
+	glm::vec2 m_localY; // local y axis
 };

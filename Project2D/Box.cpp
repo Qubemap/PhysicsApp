@@ -8,17 +8,6 @@ Box::Box(glm::vec2 position, glm::vec2 velocity, float mass, float width, float 
 	m_colour = colour;
 }
 
-void Box::FixedUpdate(glm::vec2 gravity, float timeStep)
-{
-	RigidBody::FixedUpdate(gravity, timeStep);
-
-	// store local axes
-	float cs = cosf(m_orientation);
-	float sn = sinf(m_orientation);
-	m_localX = glm::normalize(glm::vec2(cs, sn));
-	m_localY = glm::normalize(glm::vec2(-sn, cs));
-}
-
 void Box::Draw()
 {
 	glm::vec2 p1 = m_position - m_localX * m_extents.x - m_localY * m_extents.y;

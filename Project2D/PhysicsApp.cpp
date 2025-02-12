@@ -26,27 +26,32 @@ bool PhysicsApp::startup() {
 	m_font = new aie::Font("./font/consolas.ttf", 32);
 	glm::vec2 gravity = { 0, 0 };
 	m_physicsScene = new PhysicsScene(gravity);
-	m_physicsScene->SetGravity({ 0, -9.8 * 4});
-	
-	Lino* line1 = new Lino({ -0.65 , 0.75 }, -30);
-	Lino* line2 = new Lino({ 0.65, 0.75 }, -30);
-	Lino* line3 = new Lino({ 0, 1 }, -25);
-	
-	//Sphere* ball1 = new Sphere({ -20, 0 }, glm::vec2(-10, 0), 100, 5, glm::vec4(1, 0, 0, 1), 0.2);
-	//Box* box1 = new Box({ -10, 60 }, glm::vec2(0, -20), 100, 10, 20, 45, glm::vec4(0, 1, 0, 1), 0.2);
-	Basketball* bball = new Basketball({ -40, 50 }, 4);
-	m_physicsScene->AddActor(bball);
-	//bball->SetVelocity({ 0, 0 });
+	Rope(10);
+	//m_physicsScene->SetGravity({ 0, -9.8 * 4});
+	//
+	//Lino* line1 = new Lino({ -0.65 , 0.75 }, -30);
+	//Lino* line2 = new Lino({ 0.65, 0.75 }, -30);
+	//Lino* line3 = new Lino({ 0, 1 }, -25);
+	//
+	////Sphere* ball1 = new Sphere({ -20, 0 }, glm::vec2(-10, 0), 100, 5, glm::vec4(1, 0, 0, 1), 0.2);
+	////Box* box1 = new Box({ -10, 60 }, glm::vec2(0, -20), 100, 10, 20, 45, glm::vec4(0, 1, 0, 1), 0.2);
+	//Basketball* bball = new Basketball({ -40, 50 }, 2);
+	//m_physicsScene->AddActor(bball);
 
-	Crate* crate = new Crate({ 5, 20 }, 8, 8);
-	m_physicsScene->AddActor(crate);
+	//Basketball* bball2 = new Basketball({ -30, 50 }, 2);
+	//bball2->SetKinematic(true);
+	//m_physicsScene->AddActor(bball2);
 
-	Platform* platform = new Platform({ 0, -10 }, 20, 5);
-	m_physicsScene->AddActor(platform);
 
-	m_physicsScene->AddActor(line1);
-	m_physicsScene->AddActor(line2);
-	m_physicsScene->AddActor(line3);
+	//Crate* crate = new Crate({ 5, 20 }, 8, 8);
+	//m_physicsScene->AddActor(crate);
+
+	//Platform* platform = new Platform({ 0, -10 }, 20, 5);
+	//m_physicsScene->AddActor(platform);
+
+	//m_physicsScene->AddActor(line1);
+	//m_physicsScene->AddActor(line2);
+	//m_physicsScene->AddActor(line3);
 	//m_physicsScene->AddActor(ball1);
 	//m_physicsScene->AddActor(ball2);
 	//m_physicsScene->AddActor(box1);
@@ -100,4 +105,29 @@ void PhysicsApp::draw() {
 
 	// done drawing sprites
 	m_2dRenderer->end();
+}
+
+void PhysicsApp::Rope(int num)
+{
+	m_physicsScene->SetGravity(glm::vec2(0, -9.82f));
+	Sphere* prev = nullptr;
+	for (int i = 0; i < num; i++)
+	{
+		// spawn a sphere to the right and below the previous one, so that the whole rope acts under gravity and swings
+		Sphere* sphere = new Sphere(glm::vec2(i * 3, 30 - i * 5), glm::vec2(0), 10, 2, glm::vec4(1,0, 0, 1), 0.5);
+		if (i == 0)
+		{
+			sphere->SetKinematic(true);
+		}
+		m_physicsScene->AddActor(sphere);
+		if (prev)
+		{
+			m_physicsScene->AddActor(new Spring(sphere, prev, 500, 10, 7));
+		}
+		prev = sphere;
+	}
+	// add a kinematic box at an angle for the rope to drape over
+	Platform* box = new Platform(glm::vec2(0, -20), 20, 20);
+	m_physicsScene->AddActor(box);
+
 }

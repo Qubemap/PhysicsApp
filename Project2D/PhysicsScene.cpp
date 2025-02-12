@@ -73,6 +73,11 @@ void PhysicsScene::Update(float dt)
 				int shapeID1 = object1->GetShapeID();
 				int shapeID2 = object2->GetShapeID();
 
+				if (shapeID1 < 0 || shapeID2 < 0) // skip joints
+				{
+					continue;
+				}
+
 				// using fn pointers
 				int functionID = (shapeID1 * SHAPE_COUNT) + shapeID2;
 				fn collisionFunctionPtr = collisionFunctionArray[functionID];

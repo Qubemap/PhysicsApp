@@ -18,6 +18,11 @@ RigidBody::RigidBody()
 	m_linearDrag = 0.3f;
 	m_moment = 1;
 	m_isKinematic = false;
+
+	float cs = cosf(m_orientation);
+	float sn = sinf(m_orientation);
+	m_localX = glm::normalize(glm::vec2(cs, sn));
+	m_localY = glm::normalize(glm::vec2(-sn, cs));
 }
 
 RigidBody::RigidBody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity, float linearDrag, float angularDrag) : PhysicsObject(shapeID, elasticity)
@@ -33,6 +38,11 @@ RigidBody::RigidBody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, 
 	m_linearDrag = linearDrag;
 	m_moment = 1;
 	m_isKinematic = false;
+
+	float cs = cosf(m_orientation);
+	float sn = sinf(m_orientation);
+	m_localX = glm::normalize(glm::vec2(cs, sn));
+	m_localY = glm::normalize(glm::vec2(-sn, cs));
 
 	std::cout << "shape: " << shapeID << std::endl;
 
@@ -94,6 +104,11 @@ void RigidBody::ResolveCollision(RigidBody* actor2, glm::vec2 contact, glm::vec2
 	}
 }
 
+glm::vec2 RigidBody::ToWorld(glm::vec2 localPos)
+{
+	return m_position + localPos.x * m_localX + localPos.y * m_localY;
+}
+
 float RigidBody::GetPotentialEnergy()
 {
 	return -GetMass() * glm::dot(PhysicsScene::GetGravity(), GetPosition());
@@ -111,6 +126,13 @@ float RigidBody::GetEnergy()
 
 void RigidBody::FixedUpdate(glm::vec2 gravity, float timeStep)
 {
+
+	// store local axes
+	float cs = cosf(m_orientation);
+	float sn = sinf(m_orientation);
+	m_localX = glm::normalize(glm::vec2(cs, sn));
+	m_localY = glm::normalize(glm::vec2(-sn, cs));
+
 	if (m_isKinematic)
 	{
 		m_velocity = glm::vec2(0);

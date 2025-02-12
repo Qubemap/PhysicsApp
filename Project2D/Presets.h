@@ -3,6 +3,15 @@
 #include "Plane.h"
 #include "Sphere.h"
 #include "Box.h"
+#include "Spring.h"
+
+class Joint : public Spring
+{
+public:
+	Joint(RigidBody* body1, RigidBody* body2, float springCoefficient, float damping, float restLength, glm::vec2 contact1 = { 0,0 }, glm::vec2 contact2 = { 0,0 }, glm::vec4 colour = { 1, 0, 0, 1 }) 
+	: Spring(body1, body2, 500, 10, 7, contact1, contact2, colour) {}
+};
+
 
 class Basketball : public Sphere
 {

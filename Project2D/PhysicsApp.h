@@ -16,6 +16,8 @@ public:
 	virtual void update(float deltaTime);
 	virtual void draw();
 
+	virtual void Rope(int num);
+
 protected:
 
 	aie::Renderer2D*	m_2dRenderer;
