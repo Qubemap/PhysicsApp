@@ -23,6 +23,7 @@ RigidBody::RigidBody()
 	float sn = sinf(m_orientation);
 	m_localX = glm::normalize(glm::vec2(cs, sn));
 	m_localY = glm::normalize(glm::vec2(-sn, cs));
+	m_parent = this;
 }
 
 RigidBody::RigidBody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, float orientation, float mass, float elasticity, float linearDrag, float angularDrag) : PhysicsObject(shapeID, elasticity)
@@ -37,6 +38,7 @@ RigidBody::RigidBody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, 
 	m_angularDrag = angularDrag;
 	m_linearDrag = linearDrag;
 	m_moment = 1;
+	m_parent = this;
 	m_isKinematic = false;
 
 	float cs = cosf(m_orientation);
@@ -128,8 +130,8 @@ void RigidBody::FixedUpdate(glm::vec2 gravity, float timeStep)
 {
 
 	// store local axes
-	float cs = cosf(m_orientation);
-	float sn = sinf(m_orientation);
+	float cs = cosf(m_orientation + m_parent->GetOrientation());
+	float sn = sinf(m_orientation + m_parent->GetOrientation());
 	m_localX = glm::normalize(glm::vec2(cs, sn));
 	m_localY = glm::normalize(glm::vec2(-sn, cs));
 

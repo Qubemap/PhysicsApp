@@ -17,13 +17,13 @@ public:
 	
 	glm::vec2 GetPosition() const { return m_position; }
 	float GetOrientation() const { return m_orientation; }
-	glm::vec2 GetVelocity() const { return m_velocity; }
-	float GetMass() const { return m_isKinematic ? 10000000 : m_mass; }
+	glm::vec2 GetVelocity() const { return m_parent->m_velocity; }
+	float GetMass() const { return m_parent->m_isKinematic ? 10000000 : m_parent->m_mass; }
 	float GetKineticEnergy();
 	float GetEnergy() override;
 	float GetPotentialEnergy();
-	float GetAngularVelocity() const { return m_angularVelocity; }
-	float GetMoment() const { return m_isKinematic ? 10000000 : m_moment; }
+	float GetAngularVelocity() const { return m_parent->m_angularVelocity; }
+	float GetMoment() const { return m_parent->m_isKinematic ? 10000000 : m_parent->m_moment; }
 	float GetLinearDrag() const { return m_linearDrag; }
 	float GetAngularDrag() const { return m_angularDrag; }
 	glm::vec2 GetLocalX() const { return m_localX; }
@@ -49,4 +49,6 @@ protected:
 	bool m_isKinematic; // if true, object will not move
 	glm::vec2 m_localX; // local x axis
 	glm::vec2 m_localY; // local y axis
+	std::vector<RigidBody*> m_children;
+	glm::vec2 m_localPosition;
 };

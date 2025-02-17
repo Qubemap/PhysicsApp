@@ -11,11 +11,14 @@ enum ShapeType {
 	SHAPE_COUNT
 };
 
+class RigidBody;
+
 class PhysicsObject
 {
 protected:
 	PhysicsObject() { m_elasticity = 0; }
 	PhysicsObject(ShapeType a_shapeID, float elasticity = 0) : m_shapeID(a_shapeID), m_elasticity(elasticity) {}
+	
 
 public:
 	virtual void FixedUpdate(glm::vec2 gravity, float timeStep) = 0;
@@ -30,5 +33,7 @@ public:
 
 protected:
 	ShapeType m_shapeID;
+
 	float m_elasticity;
+	RigidBody* m_parent = nullptr;
 };
