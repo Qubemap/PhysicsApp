@@ -3,6 +3,8 @@
 #include <vector>
 #include <glm/glm.hpp>
 
+class RigidBody;
+
 enum ShapeType {
 	JOINT = -1,
 	PLANE = 0,
@@ -25,10 +27,12 @@ public:
 
 	ShapeType GetShapeID() { return m_shapeID; }
 	float GetElasticity() const { return m_elasticity; }
+	RigidBody* GetParent() { return m_parent; }
 
 	void SetElasticity(float elasticity) { m_elasticity = elasticity; }
 
 protected:
 	ShapeType m_shapeID;
 	float m_elasticity;
+	RigidBody* m_parent;
 };
