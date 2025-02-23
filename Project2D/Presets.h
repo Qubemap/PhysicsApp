@@ -34,7 +34,7 @@ public:
 class Crate : public Box
 {
 public:
-	Crate(glm::vec2 position, float height, float width) : Box(position, {0, 0}, (height + width) * 8, height, width, 0, {1, 0.5, 0.5, 1}, 0.1, 0.3f, 0.3f)
+	Crate(glm::vec2 position, float height, float width) : Box(position, {0, 0}, (height + width) * 1, height, width, 0, {1, 0.5, 0.5, 1}, 0.1, 0.3f, 0.3f)
 	{
 
 	}
@@ -52,9 +52,12 @@ public:
 class Platform : public Box
 {
 public:
-	Platform(glm::vec2 position, float height, float width) : Box(position, { 0, 0 }, 100000000, height, width, 0, { 0.5, 0.5, 1, 1 }, 0.1, 0.3f, 0.3f)
+	Platform(glm::vec2 position, float height, float width) : Box(position, { 0, 0 }, 100000000, height, width, 0, { 1, 0.9, 0, 1 }, 0.1, 0.3f, 0.3f)
 	{
 		m_isKinematic = true;
 		//m_mass = 100000000;
 	}
 };
+
+
+

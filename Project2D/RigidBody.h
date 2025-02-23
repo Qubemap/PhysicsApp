@@ -38,6 +38,7 @@ public:
 	void SetOrientation(float orientation) { m_orientation = orientation; }
 	void SetKinematic(bool isKinematic) { m_isKinematic = isKinematic; }
 	void SetLocalPosition(glm::vec2 position) { m_localPosition = position; }
+	void SetAngularVelocity(float angularVelocity) { m_angularVelocity = angularVelocity; }
 
 protected:
 	glm::vec2 m_position;
@@ -53,5 +54,6 @@ protected:
 	glm::vec2 m_localY; // local y axis
 	std::vector<RigidBody*> m_children;
 	glm::vec2 m_localPosition;
+	bool m_floating;
 
 };

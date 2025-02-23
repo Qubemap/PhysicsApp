@@ -24,50 +24,56 @@ bool PhysicsApp::startup() {
 
 	m_2dRenderer = new aie::Renderer2D();
 	m_font = new aie::Font("./font/consolas.ttf", 32);
-	glm::vec2 gravity = { 0, -9.8 };
+	glm::vec2 gravity = { 0, -9.8f };
 	m_physicsScene = new PhysicsScene(gravity);
-	//Rope(10);
-	//m_physicsScene->SetGravity({ 0, -9.8 * 4});
-	//
-	Lino* line1 = new Lino({ -0.65 , 0.75 }, -30);
-	Lino* line2 = new Lino({ 0.65, 0.75 }, -30);
-	Lino* line3 = new Lino({ 0, 1 }, -25);
-
-	m_physicsScene->AddActor(line1);
-	m_physicsScene->AddActor(line2);
-	m_physicsScene->AddActor(line3);  // flat plane
-	//
-	////Sphere* ball1 = new Sphere({ -20, 0 }, glm::vec2(-10, 0), 100, 5, glm::vec4(1, 0, 0, 1), 0.2);
-	////Box* box1 = new Box({ -10, 60 }, glm::vec2(0, -20), 100, 10, 20, 45, glm::vec4(0, 1, 0, 1), 0.2);
 	
-	Basketball* bball = new Basketball({ -40, 50 }, 2);
-	m_physicsScene->AddActor(bball); 
+	/*Platform* platform = new Platform({ 0, -50 }, 200, 20);
+	m_physicsScene->AddActor(platform);*/
 
-	//Basketball* bball2 = new Basketball({ -30, 50 }, 2);
-	//bball2->SetKinematic(true);
-	//m_physicsScene->AddActor(bball2);
+	Lino* ground = new Lino({ 0,1 }, -50);
+	m_physicsScene->AddActor(ground);
 
+	Rope(13);
 
-	//Crate* crate = new Crate({ 5, 20 }, 8, 8);
-	//m_physicsScene->AddActor(crate);
+	float X = 12;
 
-	Platform* platform = new Platform({ 0, -10 }, 50, 5);
-	//m_physicsScene->AddActor(platform); // uncomment for flat platform
+	//Crate* lgWall = new Crate({ X, -50 }, 5, 30);
+	//m_physicsScene->AddActor(lgWall);
+
+	//Crate* rgWall = new Crate({ X + 30, -50 }, 5, 30);
+	//m_physicsScene->AddActor(rgWall);
+
+	Crate* rgWall = new Crate({ X + 15, -50 }, 10, 30);
+	m_physicsScene->AddActor(rgWall);
+
+	Crate* gFloor = new Crate({ X + 15, -20}, 40, 5);
+	m_physicsScene->AddActor(gFloor);
+
+	//rgWall->AddChild(gFloor);
+
+	Crate* loneWall = new Crate({ X + 2, 0 }, 5, 30);
+	m_physicsScene->AddActor(loneWall);
+
+	Crate* roneWall = new Crate({ X + 28, 0 }, 5, 30);
+	m_physicsScene->AddActor(roneWall);
 
 	
-	//m_physicsScene->AddActor(ball1);
-	//m_physicsScene->AddActor(ball2);
-	//m_physicsScene->AddActor(box1);
 
-	Crate* box1 = new Crate({ -20,30 }, 10, 10);
-	Crate* box2 = new Crate({ -15,25 }, 7, 7);
+	Crate* oneFloor = new Crate({ X + 15, 16 }, 35, 5);
+	m_physicsScene->AddActor(oneFloor);
 	
-	box1->AddChild(box2);
-
-	m_physicsScene->AddActor(box1);
-	m_physicsScene->AddActor(box2);
 	return true;
 }
+
+/*Lino* line1 = new Lino({ -0.65 , 0.75 }, -30);
+	Lino* line2 = new Lino({ 0.65, 0.75 }, -30);
+	Lino* line3 = new Lino({ 0, 1 }, -25);
+	Lino* line4 = new Lino({ 0, -1 }, -50);*/
+
+	//m_physicsScene->AddActor(line1);
+	//m_physicsScene->AddActor(line2);
+	//m_physicsScene->AddActor(line3);  // flat plane
+	//m_physicsScene->AddActor(line4);
 
 //ROCKET
 //m_physicsScene->setGravity(glm::vec2(0, -1));
@@ -121,19 +127,30 @@ void PhysicsApp::Rope(int num)
 {
 	//m_physicsScene->SetGravity(glm::vec2(0, -9.82f));
 	Sphere* prev = nullptr;
-	for (int i = 0; i < num; i++)
+	for (int i = 0; i <= num; i++)
 	{
-		// spawn a sphere to the right and below the previous one, so that the whole rope acts under gravity and swings
-		Sphere* sphere = new Sphere(glm::vec2(i * 3, 30 - i * 5), glm::vec2(0), 10, 2, glm::vec4(1,0, 0, 1), 0.5);
+		float mass = 1;
+		float radius = 0.5;
+		if (i == num)
+		{
+			mass = 20;
+			radius = 2;
+		}
+		// spawn a sphere to the left and below the previous one, so that the whole rope acts under gravity and swings
+		Sphere* sphere = new Sphere(glm::vec2(-20 + (i * -4), 50), glm::vec2(0), mass, radius, glm::vec4(1, 0, 0, 1), 0.5, 0.1, 0.1);
+
 		if (i == 0)
 		{
 			sphere->SetKinematic(true);
 		}
+
 		m_physicsScene->AddActor(sphere);
+
 		if (prev)
 		{
-			m_physicsScene->AddActor(new Spring(sphere, prev, 500, 10, 7));
+			m_physicsScene->AddActor(new Spring(sphere, prev, 999, 0, 4)); //springcoefficient, damping, restlength
 		}
+
 		prev = sphere;
 	}
 	// add a kinematic box at an angle for the rope to drape over

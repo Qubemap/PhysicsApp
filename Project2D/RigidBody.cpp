@@ -2,8 +2,8 @@
 #include <iostream>
 #include "PhysicsScene.h"
 
-float MIN_LINEAR_THRESHOLD = 0.2;
-float MIN_ANGULAR_THRESHOLD = 0.01;
+float MIN_LINEAR_THRESHOLD = 0.1;
+float MIN_ANGULAR_THRESHOLD = 0.12;
 
 RigidBody::RigidBody()
 {
@@ -169,9 +169,18 @@ void RigidBody::FixedUpdate(glm::vec2 gravity, float timeStep)
 
 	m_orientation += m_angularVelocity * timeStep;
 	
+	/*if (abs(m_velocity.x) < MIN_LINEAR_THRESHOLD)
+	{
+		m_velocity = glm::vec2(0, m_velocity.y);
+	}*/
+
 	if (abs(m_velocity.x) < MIN_LINEAR_THRESHOLD)
 	{
 		m_velocity = glm::vec2(0, m_velocity.y);
+	}
+	if (abs(m_velocity.y) < MIN_LINEAR_THRESHOLD)
+	{
+		m_velocity = glm::vec2(m_velocity.x, 0);
 	}
 	if (abs(m_angularVelocity) < MIN_ANGULAR_THRESHOLD)
 	{
