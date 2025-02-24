@@ -36,7 +36,7 @@ class Crate : public Box
 public:
 	Crate(glm::vec2 position, float height, float width) : Box(position, {0, 0}, (height + width) * 1, height, width, 0, {1, 0.5, 0.5, 1}, 0.1, 0.3f, 0.3f)
 	{
-
+		SetKinematic(true);
 	}
 };
 

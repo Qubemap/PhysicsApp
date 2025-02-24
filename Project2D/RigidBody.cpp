@@ -160,7 +160,7 @@ void RigidBody::FixedUpdate(glm::vec2 gravity, float timeStep)
 	m_localX = glm::normalize(glm::vec2(cs, sn));
 	m_localY = glm::normalize(glm::vec2(-sn, cs));
 
-	std::cout << m_velocity[0] << " : " << m_velocity[1] << std::endl;
+	//std::cout << m_velocity[0] << " : " << m_velocity[1] << std::endl;
 
 	m_position += m_velocity * timeStep;
 

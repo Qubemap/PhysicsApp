@@ -40,10 +40,14 @@ public:
 	void SetTimeStep(const float timeStep) { m_timeStep = timeStep; }
 	float GetTimeStep() const { return m_timeStep; }
 
+	void SetBall(RigidBody* ball) { m_ball = ball; }
+
+
 protected:
 	static glm::vec2 m_gravity;
 	float m_timeStep;
 	std::vector<PhysicsObject*> m_actors;
+	RigidBody* m_ball;
 	
 
 };

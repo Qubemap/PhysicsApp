@@ -8,7 +8,6 @@
 
 glm::vec2 PhysicsScene::m_gravity = { 0, 0 };
 
-
 PhysicsScene::PhysicsScene()
 {
 	m_timeStep = 0.01f;
@@ -250,6 +249,7 @@ bool PhysicsScene::Box2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 {
 	Box* box = dynamic_cast<Box*>(obj1);
 	Sphere* sphere = dynamic_cast<Sphere*>(obj2);
+	
 	if (box != nullptr && sphere != nullptr)
 	{
 		// transform the circle into the box's coordinate space
@@ -268,9 +268,13 @@ bool PhysicsScene::Box2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 		float pen = sphere->GetRadius() - glm::length(circleToBox);
 		if (pen > 0)
 		{
-			glm::vec2 direction = glm::normalize(circleToBox);
-			glm::vec2 contact = closestPointOnBoxWorld;
-			box->ResolveCollision(sphere, contact, &direction);
+			if (sphere->GetMass() > 1)
+			{
+				glm::vec2 direction = glm::normalize(circleToBox);
+				glm::vec2 contact = closestPointOnBoxWorld;
+				box->SetKinematic(false);
+				box->ResolveCollision(sphere, contact, &direction);
+			}
 		}
 	}
 	return false;
@@ -292,6 +296,11 @@ bool PhysicsScene::Box2Box(PhysicsObject * obj1, PhysicsObject * obj2) {
 		}
 		if (pen > 0) 
 		{
+			if (!box1->IsKinematic() || !box2->IsKinematic())
+			{
+				box1->SetKinematic(false);
+				box2->SetKinematic(false);
+			}
 			box1->ResolveCollision(box2, contact / float(numContacts), &norm, pen);
 		}
 		return true;

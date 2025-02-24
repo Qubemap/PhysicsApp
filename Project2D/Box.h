@@ -19,5 +19,4 @@ public:
 protected:
 	glm::vec2 m_extents;
 	glm::vec4 m_colour;
-	
 };

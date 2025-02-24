@@ -43,7 +43,7 @@ bool PhysicsApp::startup() {
 	//Crate* rgWall = new Crate({ X + 30, -50 }, 5, 30);
 	//m_physicsScene->AddActor(rgWall);
 
-	Crate* rgWall = new Crate({ X + 15, -50 }, 10, 30);
+	Crate* rgWall = new Crate({ X + 15, -50 }, 5, 30);
 	m_physicsScene->AddActor(rgWall);
 
 	Crate* gFloor = new Crate({ X + 15, -20}, 40, 5);
@@ -51,10 +51,10 @@ bool PhysicsApp::startup() {
 
 	//rgWall->AddChild(gFloor);
 
-	Crate* loneWall = new Crate({ X + 2, 0 }, 5, 30);
+	Crate* loneWall = new Crate({ X + 0, 0 }, 5, 30);
 	m_physicsScene->AddActor(loneWall);
 
-	Crate* roneWall = new Crate({ X + 28, 0 }, 5, 30);
+	Crate* roneWall = new Crate({ X + 30, 0 }, 5, 30);
 	m_physicsScene->AddActor(roneWall);
 
 	
@@ -98,6 +98,21 @@ void PhysicsApp::update(float deltaTime) {
 
 	m_physicsScene->Update(deltaTime);
 	m_physicsScene->Draw();
+
+	if (input->isKeyDown(aie::INPUT_KEY_LEFT))
+	{
+		if (m_ball)
+		{
+			m_ball->ApplyForce({ -4, 0 }, { 0,0 });
+		}
+	}
+	else if (input->isKeyDown(aie::INPUT_KEY_RIGHT))
+	{
+		if (m_ball)
+		{
+			m_ball->ApplyForce({ 4, 0 }, { 0,0 });
+		}
+	}
 	
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
@@ -119,6 +134,10 @@ void PhysicsApp::draw() {
 	// output some text, uses the last used colour
 	m_2dRenderer->drawText(m_font, "Press ESC to quit!", 0, 0);
 
+	m_2dRenderer->drawText(m_font, "Left Arrow Key <-", 0, 650);
+
+	m_2dRenderer->drawText(m_font, "Right Arrow Key ->", 900, 650);
+
 	// done drawing sprites
 	m_2dRenderer->end();
 }
@@ -136,19 +155,24 @@ void PhysicsApp::Rope(int num)
 			mass = 20;
 			radius = 2;
 		}
-		// spawn a sphere to the left and below the previous one, so that the whole rope acts under gravity and swings
-		Sphere* sphere = new Sphere(glm::vec2(-20 + (i * -4), 50), glm::vec2(0), mass, radius, glm::vec4(1, 0, 0, 1), 0.5, 0.1, 0.1);
+		
+		Sphere* sphere = new Sphere(glm::vec2(-5, 50 + i * -4), glm::vec2(0), mass, radius, glm::vec4(1, 0, 0, 1), 0.5, 0.1, 0.1); //-20 + (i * -4), 50
 
 		if (i == 0)
 		{
 			sphere->SetKinematic(true);
 		}
 
+		if (mass > 1)
+		{
+			m_ball = sphere;
+		}
+
 		m_physicsScene->AddActor(sphere);
 
 		if (prev)
 		{
-			m_physicsScene->AddActor(new Spring(sphere, prev, 999, 0, 4)); //springcoefficient, damping, restlength
+			m_physicsScene->AddActor(new Spring(sphere, prev, 2000, 0, 4)); //springcoefficient, damping, restlength
 		}
 
 		prev = sphere;

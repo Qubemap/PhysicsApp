@@ -11,18 +11,18 @@ public:
 
 	virtual void FixedUpdate(glm::vec2 gravity, float timeStep);
 	void ApplyForce(glm::vec2 force, glm::vec2 pos);
-	//void ApplyForceToActor(RigidBody* actor2, glm::vec2 force);
 	void ResolveCollision(RigidBody* actor2, glm::vec2 contact, glm::vec2* collisionNormal=nullptr, float pen = 0);
 	glm::vec2 ToWorld(glm::vec2 localPos);
 	void AddChild(RigidBody* child);
-	
-	glm::vec2 GetPosition() const { return m_position; }
-	float GetOrientation() const { return m_orientation; }
-	glm::vec2 GetVelocity() const { return m_parent->m_velocity; }
-	float GetMass() const { return m_parent->m_isKinematic ? 10000000 : m_parent->m_mass; }
+
 	float GetKineticEnergy();
 	float GetEnergy() override;
 	float GetPotentialEnergy();
+	
+	glm::vec2 GetPosition() const { return m_position; }
+	glm::vec2 GetVelocity() const { return m_parent->m_velocity; }
+	float GetMass() const { return m_parent->m_isKinematic ? 10000000 : m_parent->m_mass; }
+	float GetOrientation() const { return m_orientation; }
 	float GetAngularVelocity() const { return m_parent->m_angularVelocity; }
 	float GetMoment() const { return m_parent->m_isKinematic ? 10000000 : m_parent->m_moment; }
 	float GetLinearDrag() const { return m_linearDrag; }
@@ -30,15 +30,15 @@ public:
 	glm::vec2 GetLocalX() const { return m_localX; }
 	glm::vec2 GetLocalY() const { return m_localY; }
 
+	void SetPosition(glm::vec2 position) { m_position = position; }
 	void SetVelocity(glm::vec2 velocity) { m_velocity = velocity; }
 	void SetMass(float mass) { m_mass = mass; }
+	void SetAngularVelocity(float angularVelocity) { m_angularVelocity = angularVelocity; }
+	void SetOrientation(float orientation) { m_orientation = orientation; }
 	void SetLinearDrag(float linearDrag) { m_linearDrag = linearDrag; }
 	void SetAngularDrag(float angularDrag) { m_angularDrag = angularDrag; }
-	void SetPosition(glm::vec2 position) { m_position = position; }
-	void SetOrientation(float orientation) { m_orientation = orientation; }
 	void SetKinematic(bool isKinematic) { m_isKinematic = isKinematic; }
 	void SetLocalPosition(glm::vec2 position) { m_localPosition = position; }
-	void SetAngularVelocity(float angularVelocity) { m_angularVelocity = angularVelocity; }
 
 protected:
 	glm::vec2 m_position;
@@ -49,11 +49,10 @@ protected:
 	float m_moment; 
 	float m_linearDrag; 
 	float m_angularDrag; // rotational drag
-	bool m_isKinematic; // if true, object will not move
+	bool m_isKinematic; // if true, object won't move
 	glm::vec2 m_localX; // local x axis
 	glm::vec2 m_localY; // local y axis
 	std::vector<RigidBody*> m_children;
 	glm::vec2 m_localPosition;
-	bool m_floating;
 
 };

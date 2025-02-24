@@ -25,6 +25,8 @@ protected:
 	//aie::Texture*		m_shipTexture;
 	aie::Font*			m_font;
 
+	RigidBody* m_ball;
+
 	float m_timer;
 	PhysicsScene* m_physicsScene;
 };
