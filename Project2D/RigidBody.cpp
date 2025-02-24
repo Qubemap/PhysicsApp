@@ -2,8 +2,8 @@
 #include <iostream>
 #include "PhysicsScene.h"
 
-float MIN_LINEAR_THRESHOLD = 0.2;
-float MIN_ANGULAR_THRESHOLD = 0.01;
+float MIN_LINEAR_THRESHOLD = 0.1;
+float MIN_ANGULAR_THRESHOLD = 0.12;
 
 RigidBody::RigidBody()
 {
@@ -18,6 +18,7 @@ RigidBody::RigidBody()
 	m_linearDrag = 0.3f;
 	m_moment = 1;
 	m_isKinematic = false;
+	m_parent = this;
 
 	float cs = cosf(m_orientation);
 	float sn = sinf(m_orientation);
@@ -40,6 +41,7 @@ RigidBody::RigidBody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, 
 	m_moment = 1;
 	m_parent = this;
 	m_isKinematic = false;
+	m_parent = this;
 
 	float cs = cosf(m_orientation);
 	float sn = sinf(m_orientation);
@@ -53,15 +55,9 @@ RigidBody::RigidBody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, 
 void RigidBody::ApplyForce(glm::vec2 force, glm::vec2 pos)
 {
 	// using getMass() and getMoment() here in case we ever get it to do something more than just return mass
-	m_velocity += force / GetMass();
-	m_angularVelocity += (force.y * pos.x - force.x * pos.y) / GetMoment();
+	m_parent->m_velocity += force / GetMass();
+	m_parent->m_angularVelocity += (force.y * pos.x - force.x * pos.y) / GetMoment();
 }
-
-//void RigidBody::ApplyForceToActor(RigidBody* actor2, glm::vec2 force)
-//{
-//	actor2->ApplyForce(force);
-//	ApplyForce(force * glm::vec2(-1, -1));
-//}
 
 void RigidBody::ResolveCollision(RigidBody* actor2, glm::vec2 contact, glm::vec2* collisionNormal, float pen)
 {
@@ -111,6 +107,17 @@ glm::vec2 RigidBody::ToWorld(glm::vec2 localPos)
 	return m_position + localPos.x * m_localX + localPos.y * m_localY;
 }
 
+void RigidBody::AddChild(RigidBody* child)
+{
+	if (child == nullptr) { return; }
+
+	child->SetKinematic(true);
+	child->m_parent = this;
+	child->SetLocalPosition(child->GetPosition() - GetPosition());
+	child->SetOrientation(child->GetOrientation() - GetOrientation());
+	m_children.push_back(child);
+}
+
 float RigidBody::GetPotentialEnergy()
 {
 	return -GetMass() * glm::dot(PhysicsScene::GetGravity(), GetPosition());
@@ -128,12 +135,17 @@ float RigidBody::GetEnergy()
 
 void RigidBody::FixedUpdate(glm::vec2 gravity, float timeStep)
 {
+	if (m_parent != this)
+	{
+		RigidBody* parent = dynamic_cast<RigidBody*>(m_parent);
+		float cs = cosf(m_orientation + parent->GetOrientation());
+		float sn = sinf(m_orientation + parent->GetOrientation());
+		m_localX = glm::normalize(glm::vec2(cs, sn));
+		m_localY = glm::normalize(glm::vec2(-sn, cs));
 
-	// store local axes
-	float cs = cosf(m_orientation + m_parent->GetOrientation());
-	float sn = sinf(m_orientation + m_parent->GetOrientation());
-	m_localX = glm::normalize(glm::vec2(cs, sn));
-	m_localY = glm::normalize(glm::vec2(-sn, cs));
+		m_position = parent->GetPosition() + m_localPosition.x * parent->m_localX + m_localPosition.y * parent->m_localY;
+		return;
+	}
 
 	if (m_isKinematic)
 	{
@@ -141,6 +153,12 @@ void RigidBody::FixedUpdate(glm::vec2 gravity, float timeStep)
 		m_angularVelocity = 0;
 		return;
 	}
+
+	// store local axes
+	float cs = cosf(m_orientation);
+	float sn = sinf(m_orientation);
+	m_localX = glm::normalize(glm::vec2(cs, sn));
+	m_localY = glm::normalize(glm::vec2(-sn, cs));
 
 	std::cout << m_velocity[0] << " : " << m_velocity[1] << std::endl;
 
@@ -153,16 +171,22 @@ void RigidBody::FixedUpdate(glm::vec2 gravity, float timeStep)
 
 	m_orientation += m_angularVelocity * timeStep;
 	
-	
+	/*if (abs(m_velocity.x) < MIN_LINEAR_THRESHOLD)
+	{
+		m_velocity = glm::vec2(0, m_velocity.y);
+	}*/
+
 	if (abs(m_velocity.x) < MIN_LINEAR_THRESHOLD)
 	{
 		m_velocity = glm::vec2(0, m_velocity.y);
+	}
+	if (abs(m_velocity.y) < MIN_LINEAR_THRESHOLD)
+	{
+		m_velocity = glm::vec2(m_velocity.x, 0);
 	}
 	if (abs(m_angularVelocity) < MIN_ANGULAR_THRESHOLD)
 	{
 		m_angularVelocity = 0;
 	}
-	
-
 	
 }

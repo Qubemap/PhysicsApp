@@ -81,7 +81,7 @@ void PhysicsScene::Update(float dt)
 				// using fn pointers
 				int functionID = (shapeID1 * SHAPE_COUNT) + shapeID2;
 				fn collisionFunctionPtr = collisionFunctionArray[functionID];
-				if (collisionFunctionPtr != nullptr)
+				if (collisionFunctionPtr != nullptr && object1->GetParent() != object2->GetParent())
 				{
 					collisionFunctionPtr(object1, object2);
 				}
@@ -115,11 +115,18 @@ void PhysicsScene::ApplyContactForces(RigidBody* body1, RigidBody* body2, glm::v
 
 	float body1Factor = body2Mass / (body1->GetMass() + body2Mass);
 
-	body1->SetPosition(body1->GetPosition() - body1Factor * norm * pen);
 
+
+	/*body1->SetPosition(body1->GetPosition() - body1Factor * norm * pen);
 	if (body2)
 	{
 		body2->SetPosition(body2->GetPosition() + (1 - body1Factor) * norm * pen);
+	}*/
+
+	body1->GetParent()->GetParent()->SetPosition(body1->GetParent()->GetPosition() - body1Factor * norm * pen);
+	if (body2)
+	{
+		body2->GetParent()->GetParent()->SetPosition(body2->GetParent()->GetPosition() + (1 - body1Factor) * norm * pen);
 	}
 }
 
