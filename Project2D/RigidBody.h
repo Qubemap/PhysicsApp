@@ -14,6 +14,7 @@ public:
 	void ResolveCollision(RigidBody* actor2, glm::vec2 contact, glm::vec2* collisionNormal=nullptr, float pen = 0);
 	glm::vec2 ToWorld(glm::vec2 localPos);
 	void AddChild(RigidBody* child);
+	bool IsKinematic() const { return m_isKinematic; }
 
 	float GetKineticEnergy();
 	float GetEnergy() override;

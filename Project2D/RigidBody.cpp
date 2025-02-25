@@ -164,12 +164,16 @@ void RigidBody::FixedUpdate(glm::vec2 gravity, float timeStep)
 
 	m_position += m_velocity * timeStep;
 
+	m_orientation += m_angularVelocity * timeStep;
+
 	ApplyForce(gravity * GetMass() * timeStep, {0,0});
+	// alternatively:
+	//m_velocity += (gravity * timeStep);
 
 	m_velocity -= m_velocity * m_linearDrag * timeStep;
 	m_angularVelocity -= m_angularVelocity * m_angularDrag * timeStep;
 
-	m_orientation += m_angularVelocity * timeStep;
+	
 	
 	/*if (abs(m_velocity.x) < MIN_LINEAR_THRESHOLD)
 	{
